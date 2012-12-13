@@ -1,28 +1,21 @@
-<!-- 
- Ladder2c is ladder logic to C code converter.
- Copyright (C) 2012  Maciej Laskowski
-
- This program is free software: you can redistribute it and/or modify
- it under the terms of the GNU Affero General Public License as published by
- the Free Software Foundation, either version 3 of the License, or
- any later version.
-
- This program is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- GNU Affero General Public License for more details.
-
- You should have received a copy of the GNU Affero General Public License
- along with this program.  If not, see http://www.gnu.org/licenses/.
- -->
+<!-- Ladder2c is ladder logic to C code converter. Copyright (C) 2012 Maciej 
+	Laskowski This program is free software: you can redistribute it and/or modify 
+	it under the terms of the GNU Affero General Public License as published 
+	by the Free Software Foundation, either version 3 of the License, or any 
+	later version. This program is distributed in the hope that it will be useful, 
+	but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
+	or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License 
+	for more details. You should have received a copy of the GNU Affero General 
+	Public License along with this program. If not, see http://www.gnu.org/licenses/. -->
 <program>
 	<elements>
-		<timer id="T1" delay="100" target="true" unit="ms"/>
+		<timer id="T1" delay="100" target="true" unit="ms" />
 		<reg id="R1" />
 		<contact id="X1" normal="true" />
 		<contact id="X2" normal="false" />
-		<coil id="Y1" type="set"/>
+		<coil id="Y1" type="set" />
 		<counter id="C1" countTo="10" target="false" />
+		<counter id="C2" countTo="20" target="true" />
 	</elements>
 	<diagram>
 		<output id="R1">
@@ -46,7 +39,9 @@
 			</and>
 		</output>
 		<output id="Y1">
-			<elem id="R1" />
+			<not>
+				<elem id="C1" />
+			</not>
 		</output>
 	</diagram>
 </program>
