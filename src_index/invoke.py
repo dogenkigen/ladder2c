@@ -1,12 +1,12 @@
 #!/usr/bin/python
 
-from CodeGenerator import *
-from Condition import *
+from lib.CodeGenerator import *
+from lib.Condition import *
 
 
 
 config = ConfigParser.ConfigParser()
-config.readfp(open("stm32f103vct6.cfg"))
+config.readfp(open("conf/stm32f103vct6.conf"))
 
 gen = CodeGenerator(config)
 
