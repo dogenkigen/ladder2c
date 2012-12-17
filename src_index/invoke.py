@@ -10,33 +10,27 @@ import xml.etree.ElementTree as ET
 
 #"""
 
-def recurse(object, super=None):
-    if object.tag != "elem":
-        return recurse(object.find(".//*"), object.tag)
+def recurse(object):
+    if len(object) > 1:
+        elemList = []
+        for oneElem in object:
+            if oneElem.tag == "elem":
+                elemList.append(config.get("elements", oneElem.attrib["id"]))
+            else:
+                elemList.append(recurse(oneElem))
+        if object.tag == "and":
+            return Condition.logicMultiple(elemList, "&&")
+        if object.tag == "or":
+            return Condition.logicMultiple(elemList, "||")        
     else:
-        if super == "not":
-            print object.attrib["id"]
-            return Condition.logicNot(config.get("elements", object.attrib["id"]))
-        
-        elif super == "and":
-            elemsList = []
-            for elem in object:
-                elemsList.append(object.attrib["id"])
-                
-            return Condition.logicNot(config.get("elements", elemsList))
-        
-        elif super == "or":
-            elemsList = []
-            for elem in object:
-                elemsList.append(object.attrib["id"])
-        
-            return Condition.logicNot(config.get("elements", elemsList))
-                                      
-        
-                
-            
-        #"""
-            
+        if object.tag == "elem":
+            return config.get("elements", object.attrib["id"])
+        if object.tag == "not":
+            return Condition.logicOne(recurse(object.find(".*")), "!")
+    
+    raise Exception("Program is invalid!")
+    return
+
 #"""    
            
 
@@ -67,41 +61,23 @@ config = ConfigParser.ConfigParser()
 config.readfp(open("conf/stm32f103vct6.conf"))
 
 
-
+"""
 countersList = []
 
 elements = root.getiterator("elements")
 
 for element in elements:
-    #print tostring(element)
     for counter in element.getiterator("counter"):
-        #print tostring(counter)
         countersList.append([counter.attrib["id"], counter.attrib["countTo"], counter.attrib["target"]])
+"""
 
-
-gen = CodeGenerator(config, countersList)
+gen = CodeGenerator(config)
 
 
 
 for output in root.find("diagram").findall("output"):
-    gen.appendCondtion(recurse(output), config.get("elements", output.attrib["id"]))
+    gen.appendCondtion(recurse(output.find(".*")), config.get("elements", output.attrib["id"]))
         
 
-
-"""
-
-gen.appendCondtion(Condition.logicAnd(config.get("elements", "y1"), config.get("elements", "y2")), config.get("elements", "y1_type_set"))
-gen.appendCondtion(Condition.logicNot(config.get("elements", "y1")), config.get("elements", "y1_type_set"))
-
-gen.appendCondtion(Condition.logicNot(config.get("elements", "y1")), "C1")
-
-
-
-
-"""
 print gen.getCode()
 
-
-"""
-            for counter in elements.getiterator("counter"):
-                if output == counter.attrib["id"]:"""

@@ -21,10 +21,10 @@ from Condition import *
 class CodeGenerator:
     """Generates all C code."""
 
-    def __init__(self, config, counters):
+    def __init__(self, config):#, counters):
         self.config = config
         self.code = ""
-        self.counters = counters
+        #self.counters = counters
         self.__begin()
     
     def __begin(self):
@@ -43,11 +43,13 @@ class CodeGenerator:
         #Start main function
         self.code = self.code + "int main(void){"
         
-        #Add counters
+        #Add counters TODO
+        """
         for counter in self.counters:
             self.code = self.code + "int counter_" + counter[0] + " = 0;"
             self.code = self.code + "int count_" + counter[0] + "_to = " + counter[1] + ";"
             self.code = self.code + "bool counter_" + counter[0] + "_target = " + counter[2] + ";"
+        """
             
         self.code = self.code + "\n"
         self.code = self.code + "\nwhile(1){"

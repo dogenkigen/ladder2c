@@ -19,24 +19,24 @@
 	</elements>
 	<diagram>
 		<output id="R1">
-			<and>
+			<not>
 				<and>
-					<elem id="X2" />
-					<elem id="C1" />
-				</and>
-				<elem id="X1" />
-				<elem id="T1" />
-				<not>
 					<and>
+						<elem id="X2" />
+						<elem id="C1" />
+					</and>
+					<elem id="X1" />
+					<elem id="T1" />
+					<not>
 						<or>
+							<elem id="X1" />
 							<not>
 								<elem id="C1" />
 							</not>
-							<elem id="X1" />
 						</or>
-					</and>
-				</not>
-			</and>
+					</not>
+				</and>
+			</not>
 		</output>
 		<output id="Y1">
 			<not>
