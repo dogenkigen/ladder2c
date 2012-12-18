@@ -21,9 +21,10 @@ from Condition import *
 class CodeGenerator:
     """Generates all C code."""
 
-    def __init__(self, config):#, counters):
+    def __init__(self, config, delay=False):#, counters):
         self.config = config
         self.code = ""
+        self.delay = delay
         #self.counters = counters
         self.__begin()
     
@@ -34,14 +35,26 @@ class CodeGenerator:
         self.code = self.config.get("base", "header") + "\n"
         for include in string.split(self.config.get("base", "includes"), " "):
             self.code = self.code + "#include <" + include + ">\n"
+            
+        #Add defines
+        self.code = self.code + "\n"
+        for define in string.split(self.config.get("base", "defines"), ","):
+            self.code = self.code + define + "\n"
         
         #Add functions
         self.code = self.code + "\n"
-        for function in self.config.get("base", "functions"):
-            self.code = self.code + function  
+        self.code = self.code + self.config.get("base", "functions")
+            
+        #Add delay stuff
+        if self.delay:
+            self.code = self.code + self.config.get("base", "delay")
             
         #Start main function
         self.code = self.code + "int main(void){"
+        
+        #Init delay
+        if self.delay:
+            self.code = self.code + "delay_init();"
         
         #Add counters TODO
         """
@@ -54,6 +67,10 @@ class CodeGenerator:
         self.code = self.code + "\n"
         self.code = self.code + "\nwhile(1){"
         # TODO add gpio stuff
+    
+    def getTimer(self, delayUnit, delayCount):
+        if delayUnit == "ms":
+            return "delay_ms(" + str(delayCount) + ");"
     
     def appendCondtion(self, condition, output):
         """Add next if condition."""

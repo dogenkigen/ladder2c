@@ -71,12 +71,15 @@ for element in elements:
         countersList.append([counter.attrib["id"], counter.attrib["countTo"], counter.attrib["target"]])
 """
 
-gen = CodeGenerator(config)
+gen = CodeGenerator(config, True)
 
 
 
 for output in root.find("diagram").findall("output"):
-    gen.appendCondtion(recurse(output.find(".*")), config.get("elements", output.attrib["id"]))
+    if output.attrib["id"]. startswith("T"):
+        gen.appendCondtion(recurse(output.find(".*")), gen.getTimer()#TODO
+    else:
+        gen.appendCondtion(recurse(output.find(".*")), config.get("elements", output.attrib["id"]))
         
 
 print gen.getCode()
