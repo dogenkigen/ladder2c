@@ -9,7 +9,7 @@
 	Public License along with this program. If not, see http://www.gnu.org/licenses/. -->
 <program>
 	<elements>
-		<timer id="T1" delay="100" target="true" unit="ms" />
+		<timer id="T1" delay="100" unit="ms" />
 		<reg id="R1" />
 		<contact id="X1" normal="true" />
 		<contact id="X2" normal="false" />
@@ -38,7 +38,7 @@
 				</and>
 			</not>
 		</output>
-		<output id="Y1">
+		<output id="T1">
 			<not>
 				<elem id="C1" />
 			</not>

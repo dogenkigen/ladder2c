@@ -73,14 +73,21 @@ for element in elements:
 
 gen = CodeGenerator(config, True)
 
+elements = root.find("elements")
 
+print tostring(elements.find(".//timer[@id='T1']"))
+
+#"""
 
 for output in root.find("diagram").findall("output"):
     if output.attrib["id"]. startswith("T"):
-        gen.appendCondtion(recurse(output.find(".*")), gen.getTimer()#TODO
+        id = output.attrib["id"]
+        timer = elements.find(".//timer[@id='" + id + "']")
+        gen.appendCondtion(recurse(output.find(".*")), gen.getTimer(timer.attrib["delay"], timer.attrib["unit"])) #TODO
     else:
         gen.appendCondtion(recurse(output.find(".*")), config.get("elements", output.attrib["id"]))
         
 
 print gen.getCode()
 
+#"""

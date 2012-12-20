@@ -68,9 +68,10 @@ class CodeGenerator:
         self.code = self.code + "\nwhile(1){"
         # TODO add gpio stuff
     
-    def getTimer(self, delayUnit, delayCount):
-        if delayUnit == "ms":
-            return "delay_ms(" + str(delayCount) + ");"
+    def getTimer(self, delayCount, delayUnit="ms"):
+        if delayUnit == "us":
+            return "delay_us(" + str(delayCount) + ")"
+        return "delay_ms(" + str(delayCount) + ")"
     
     def appendCondtion(self, condition, output):
         """Add next if condition."""
