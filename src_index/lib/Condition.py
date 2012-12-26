@@ -14,38 +14,25 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see http://www.gnu.org/licenses/.
 
+import types
+
 class Condition:
     """Utility to generate logical conditions"""
     
     @staticmethod
-    def logicNot(arg):
-        code = "!(" + arg + ")"
+    def logicOne(arg, operator):
+        code = operator + "(" + arg + ")"
         return code
     
     @staticmethod
-    def logicOr(*args):
-        code = "("
-        i = 1
-        for single in args:
-            code = code + single
-            if len(args) < i :
-                code = code + " || "
-            i += 1
-        
-        code = code + ")"
-        return code
-    
-    @staticmethod
-    def logicAnd(*args):
+    def logicMultiple(args, operator):
         code = "("
         i = 1
         for single in args:
             code = code + single
             if len(args) > i :
-                code = code + " && "
+                code = code + " " + operator + " "
             i += 1
         
         code = code + ")"
         return code
-        
-    
