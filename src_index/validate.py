@@ -16,27 +16,29 @@
 # along with this program.  If not, see http://www.gnu.org/licenses/.
 
 from lxml import etree
+from src_index import app
 
-#load files
-fxml = open('program.xml')
-fxsd = open('schema.xsd')
-
-#create parser which will be validate xsd schema
-parser = etree.XMLParser(dtd_validation=True)
-
-#convert files to strings
-xsdStr = ""
-for line in fxsd:
-    xsdStr = xsdStr + line
+def validate_xml(output):
+    #load files
+    fxml = output
+    fxsd = app.open_resource('schema.xsd', 'r')
     
-xmlStr = ""
-for line in fxml:
-    xmlStr = xmlStr + line
-
-schema_root = etree.XML(xsdStr)
-schema = etree.XMLSchema(schema_root)
-#load schema to parser
-parser = etree.XMLParser(schema = schema)
-
-#validate xml
-root = etree.fromstring(xmlStr, parser)
+    #create parser which will be validate xsd schema
+    parser = etree.XMLParser(dtd_validation=True)
+    
+    #convert files to strings
+    xsdStr = ""
+    for line in fxsd:
+        xsdStr = xsdStr + line
+       
+    xmlStr = fxml
+    
+    schema_root = etree.XML(xsdStr)
+    schema = etree.XMLSchema(schema_root)
+    #load schema to parser
+    parser = etree.XMLParser(schema = schema)
+    
+    #validate xml
+    root = etree.fromstring(xmlStr, parser)
+    
+    
