@@ -382,8 +382,7 @@
                         	if(type=='coil'){
                         		a += 'Set/reset: '+mySel.item_set_type;
                         	}if(type=='timer'){
-                        		a += 'Target: '+ mySel.item_target;
-                        		a += '<br>Delay: '+ mySel.item_delay;
+                        		a += 'Delay: '+ mySel.item_delay;
                         	}if(type=='counter'){
                         		a += 'Target: '+ mySel.item_target;
                         		a += '<br>Count to: '+ mySel.item_countTo;
@@ -523,7 +522,6 @@
 				if(item_type=='coil'){
 					var item_set_type = document.getElementById('set_type').value;
 				}else if(item_type=='timer'){
-					var item_target = document.getElementById('item_target').value;
 					var item_delay = document.getElementById('item_delay').value;
 				}else if(item_type=='register'){
 
@@ -555,8 +553,7 @@
 				}else if(elem == 'timer'){
 					document.getElementById('div_type').style.display = 'none';
 					document.getElementById('div_delay').style.display = 'block';
-					document.getElementById('div_countTo').style.display = 'none';
-					document.getElementById('div_target').style.display = 'block';				
+					document.getElementById('div_countTo').style.display = 'none';		
 				}else if(elem == 'reg'){
 					document.getElementById('div_type').style.display = 'none';
 					document.getElementById('div_delay').style.display = 'none';
