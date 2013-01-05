@@ -80,16 +80,16 @@ def get_json():
 		try:
 			xml = XmlGenerator.XmlGenerator()
 			outputXml = xml.start(data)
+			try:
+				validate.validate_xml(outputXml)
+			except Exception:
+				return 'Error, incorrect element name'
 			print "-----------XML--------------"
 			print outputXml
 			print "-----------XML--------------"
 			print "-----------C CODE--------------"
 			print parseXml(etree.fromstring(outputXml, loadParser()))
 			print "-----------C CODE--------------"
-			try:
-				validate.validate_xml(outputXml)
-			except Exception:
-				return 'Error, incorrect element name'
 			
 		except NoOutputsError:
 			return 'Error! No output'
