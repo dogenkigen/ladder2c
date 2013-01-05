@@ -16,9 +16,9 @@
 
 import ConfigParser, os
 import string
-from Condition import *
+from src_index import app
 
-class CodeGenerator:
+class CCodeGenerator:
     """Generates all C code."""
 
     def __init__(self, config, delay=False):#, counters):

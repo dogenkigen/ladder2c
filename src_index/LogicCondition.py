@@ -15,8 +15,9 @@
 # along with this program.  If not, see http://www.gnu.org/licenses/.
 
 import types
+from src_index import app
 
-class Condition:
+class LogicCondition:
     """Utility to generate logical conditions"""
     
     @staticmethod
