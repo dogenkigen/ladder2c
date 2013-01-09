@@ -21,28 +21,39 @@ class XmlGenerator():
         <elements>
         </elements>
         '''
+        def check_duplicat(xml_str):
+            if(self.out.find(xml_str)!=-1):
+                return True
+            else:
+                return False
+        
         self._add_to_document('<elements>')
         for obj in self.dict_elems:
             tmp = self.dict_elems[obj]
             if(tmp['item_type'].split('.')[0]=='open_contact'):
                 xml_str = '<contact id="%s" normal="true" />'%tmp['item_name']
-                self._add_to_document(xml_str)
+                if(self.out.find(xml_str)==-1):
+                    self._add_to_document(xml_str)
             elif(tmp['item_type'].split('.')[0]=='close_contact'):
                 xml_str = '<contact id="%s" normal="false" />'%tmp['item_name']
-                self._add_to_document(xml_str)
+                if(self.out.find(xml_str)==-1):
+                    self._add_to_document(xml_str)
             elif(tmp['item_type'].split('.')[0]=='coil'):
                 xml_str = '<coil id="%s" type="%s" />'%(tmp['item_name'], tmp['item_set_type'])
-                self._add_to_document(xml_str)
+                if(self.out.find(xml_str)==-1):
+                    self._add_to_document(xml_str)
             elif(tmp['item_type'].split('.')[0]=='timer'):
-#                xml_str = '<timer id="%s" delay="%s" target="true" unit="ms" />'%(tmp['item_name'], tmp['item_delay'], tmp['item_target'])
                 xml_str = '<timer id="%s" delay="%s" unit="ms" />'%(tmp['item_name'], tmp['item_delay'])
-                self._add_to_document(xml_str)
+                if(self.out.find(xml_str)==-1):
+                    self._add_to_document(xml_str)
             elif(tmp['item_type'].split('.')[0]=='counter'):
                 xml_str = '<counter id="%s" countTo="%s" target="%s" />'%(tmp['item_name'], tmp['item_countTo'], tmp['item_target'])
-                self._add_to_document(xml_str)
+                if(self.out.find(xml_str)==-1):
+                    self._add_to_document(xml_str)
             elif(tmp['item_type'].split('.')[0]=='register'):
                 xml_str = '<reg id="%s" />'%(tmp['item_name'])
-                self._add_to_document(xml_str)
+                if(self.out.find(xml_str)==-1):
+                    self._add_to_document(xml_str)
                 
         self._add_to_document('</elements>')
     
@@ -75,9 +86,8 @@ class XmlGenerator():
         for row in data:
             for cell in data[row]:
                 if(data[row][cell]["item_name"]!="None"):
-                    self.dict_elems[data[row][cell]["item_name"]] = data[row][cell]
+                    self.dict_elems[data[row][cell]["id"]] = data[row][cell]
                 self.data_objs[data[row][cell]["id"]] = Cell(data[row][cell])
-                
                 
         self.data_objs = self.adjust_data(self.data_objs)
         self.elements_init()

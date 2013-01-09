@@ -41,13 +41,13 @@
                     <fieldset>
                         <legend>Add elements</legend>
                         <label>Type</label>
-                        <select id='item_type'>
-                            <option value='open_contact' selected onclick="select('contact');">-| |- contact</option>
-                            <option value='close_contact' onclick="select('contact');">-|/|- close contact</option>
-                            <option value='coil' onclick="select('coil');">-( )- coil</option>
-                            <option value='timer' onclick="select('timer');">-[ ]- timer</option>
-                            <option value='register' onclick="select('reg');">-[ ]- register</option>
-                            <option value='counter' onclick="select('counter');">-[ ]- counter</option>
+                        <select id='item_type' onchange='select(this.value)'>
+                            <option value='open_contact' selected >-| |- contact</option>
+                            <option value='close_contact' >-|/|- close contact</option>
+                            <option value='coil' >-( )- coil</option>
+                            <option value='timer' >-[ ]- timer</option>
+                            <option value='register' >-[ ]- register</option>
+                            <option value='counter' >-[ ]- counter</option>
                         </select> 
                         <div id="div_id">
 	                        <label>Id: </label><!-- TODO change this label name and add validation to the field! -->
@@ -540,7 +540,7 @@
 				s.addItem(id_cell, id_row, '', 'None', 'None', 'None', 'None', 'None');
 			}
 			function select(elem){
-				if(elem == 'contact'){
+				if(elem == 'open_contact' || elem == 'close_contact'){
 					document.getElementById('div_type').style.display = 'none';
 					document.getElementById('div_delay').style.display = 'none';
 					document.getElementById('div_countTo').style.display = 'none';
@@ -550,11 +550,11 @@
 					document.getElementById('div_delay').style.display = 'none';
 					document.getElementById('div_countTo').style.display = 'none';
 					document.getElementById('div_target').style.display = 'none';				
-				}else if(elem == 'timer'){
+				}else if(elem == 'timer'){	
 					document.getElementById('div_type').style.display = 'none';
 					document.getElementById('div_delay').style.display = 'block';
-					document.getElementById('div_countTo').style.display = 'none';		
-				}else if(elem == 'reg'){
+					document.getElementById('div_countTo').style.display = 'none';	
+				}else if(elem == 'register'){
 					document.getElementById('div_type').style.display = 'none';
 					document.getElementById('div_delay').style.display = 'none';
 					document.getElementById('div_countTo').style.display = 'none';

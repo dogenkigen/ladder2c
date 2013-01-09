@@ -10,7 +10,7 @@ from src_index import LogicCondition
 
 config = ConfigParser()
 # just for now. should load from form
-config.readfp(open("src_index/conf/stm32f103vct6.conf"))
+config.readfp(app.open_resource("conf/stm32f103vct6.conf", 'r'))
 
 def parseXml(xml):
 	elements = xml.find("elements")
@@ -53,7 +53,7 @@ def recurse(object):
 
 def loadParser():
 	#load files
-	fxsd = open('src_index/schema.xsd')
+	fxsd = app.open_resource('schema.xsd', 'r')
 	
 	#create parser which will be validate xsd schema
 	parser = etree.XMLParser(dtd_validation=True)
@@ -62,7 +62,6 @@ def loadParser():
 	xsdStr = ""
 	for line in fxsd:
 	    xsdStr = xsdStr + line
-	
 	schema_root = etree.XML(xsdStr)
 	schema = etree.XMLSchema(schema_root)
 	#load schema to parser
@@ -75,7 +74,6 @@ def index():
 @app.route("/get_json", methods=['POST', 'GET'])
 def get_json():
 	data = request.json
-	
 	try:
 		try:
 			xml = XmlGenerator.XmlGenerator()
