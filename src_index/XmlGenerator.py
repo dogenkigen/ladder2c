@@ -21,12 +21,6 @@ class XmlGenerator():
         <elements>
         </elements>
         '''
-        def check_duplicat(xml_str):
-            if(self.out.find(xml_str)!=-1):
-                return True
-            else:
-                return False
-        
         self._add_to_document('<elements>')
         for obj in self.dict_elems:
             tmp = self.dict_elems[obj]
