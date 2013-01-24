@@ -17,7 +17,11 @@ def getInput(id, elements):
 		return config.get("elements_input", id)
 	else:
 		return "!(" + config.get("elements_input", id) + ")"
+<<<<<<< HEAD
 
+=======
+	
+>>>>>>> main-ladder/master
 def getOutput(id, elements):
 	if id.startswith("Y"):
 		if elements.find(".//coil[@id='" + id + "']").attrib["type"] == "set":
@@ -41,9 +45,15 @@ def parseXml(xml):
 	        gen.appendCondtion(recurse(output.find(".*"), elements), gen.getTimer(timer.attrib["delay"], timer.attrib["unit"]))  # TODO
 	    else:
 	        gen.appendCondtion(recurse(output.find(".*"), elements), getOutput(output.attrib["id"], elements))
+<<<<<<< HEAD
 
 	return gen.getCode()
 
+=======
+	
+	return gen.getCode()
+	
+>>>>>>> main-ladder/master
 def recurse(object, elements):
 	"""Recursive method for parsing XML program"""
 	if len(object) > 1:
@@ -53,7 +63,11 @@ def recurse(object, elements):
 		        elemList.append(getInput(oneElem.attrib["id"], elements))
 		    else:
 				elemList.append(recurse(oneElem, elements))
+<<<<<<< HEAD
 
+=======
+		
+>>>>>>> main-ladder/master
 		if object.tag == "and":
 		    return LogicCondition.LogicCondition.logicMultiple(elemList, "&&")
 		if object.tag == "or":
