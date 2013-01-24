@@ -32,10 +32,6 @@
 		                	<div class="span6">
 		                        <button class="btn" onclick='send_json();' >Generate</button><br><br>
 		                	</div>
-		                	<div class="span8">
-		                        <pre id="CCode" style="display:none;" class="pre-scrollable">
-		                        </pre>
-		                    </div>
 	                	</div>
 	                </fieldset>
                     <canvas id="canvas1" width="600" height="400"
@@ -138,6 +134,11 @@
 	                        <img src="{{url_for('static',filename='instruction.jpeg')}}" width="50%">
 	                    </div>
                     </fieldset>
+                </div>
+            	<div id="Code" class="span12" style="display:none;">
+            		<h3>C code</h3>
+                    <pre id="CCode" style="display:none;" class="pre-scrollable">
+                    </pre>
                 </div>
             </div>
 
@@ -590,6 +591,7 @@
             function send_json(){
             	var msg = document.getElementById("msg");
             	var ccode = document.getElementById("CCode");
+            	var code = document.getElementById("Code");
 			    var hr = new XMLHttpRequest();
 			    hr.open("POST", "{{url_for('get_json')}}", true);
 			    hr.setRequestHeader("Content-type", "application/json;");
@@ -602,6 +604,8 @@
 				   			msg.innerHTML = a.substring(m+5, c);
 				   			ccode.innerHTML = a.substring(c+7);
 				   			ccode.style.display = 'block';
+				   			code.style.display = 'block';
+				   			code.scrollIntoView();
 				   		}else{
 				   			msg.innerHTML = a
 				   		}

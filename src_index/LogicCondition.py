@@ -32,7 +32,7 @@ class LogicCondition:
         for single in args:
             code = code + single
             if len(args) > i :
-                code = code + " " + operator + " "
+                code = code + " " + operator + "\n"
             i += 1
         
         code = code + ")"

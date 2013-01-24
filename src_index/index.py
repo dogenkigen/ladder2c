@@ -11,25 +11,12 @@ from src_index import LogicCondition
 config = ConfigParser()
 # just for now. should load from form
 config.readfp(app.open_resource("conf/stm32f103vct6.conf", 'r'))
-from flask import url_for, render_template, request, jsonify
-from src_index import app
-from src_index import XmlGenerator
-from XmlGenerator import NoOutputsError, CellError, Node, Path
-import validate
-from ConfigParser import ConfigParser
-from lxml import etree
-from src_index import CCodeGenerator
-from src_index import LogicCondition 
-
-config = ConfigParser()
-# just for now. should load from form
-config.readfp(app.open_resource("conf/stm32f103vct6.conf", 'r'))
 
 def getInput(id, elements):
 	if elements.find(".//contact[@id='" + id + "']").attrib["normal"] == "true":
 		return config.get("elements_input", id)
 	else:
-		return "!(" + config.get("elements_input", id) + ")"
+		return config.get("elements_input", id)
 
 def getOutput(id, elements):
 	if id.startswith("Y"):

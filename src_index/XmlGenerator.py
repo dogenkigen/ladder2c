@@ -24,11 +24,11 @@ class XmlGenerator():
         self._add_to_document('<elements>')
         for obj in self.dict_elems:
             tmp = self.dict_elems[obj]
-            if(tmp['item_type'].split('.')[0]=='open_contact' and not tmp['item_name'][0] in ['T', 'C', 'R', 'Y']):
+            if(tmp['item_type'].split('.')[0]=='open_contact' and not tmp['item_name'][0] in ['T']):
                 xml_str = '<contact id="%s" normal="true" />'%tmp['item_name']
                 if(self.out.find(xml_str)==-1):
                     self._add_to_document(xml_str)
-            elif(tmp['item_type'].split('.')[0]=='close_contact' and not tmp['item_name'][0] in ['T', 'C', 'R', 'Y']):
+            elif(tmp['item_type'].split('.')[0]=='close_contact' and not tmp['item_name'][0] in ['T']):
                 xml_str = '<contact id="%s" normal="false" />'%tmp['item_name']
                 if(self.out.find(xml_str)==-1):
                     self._add_to_document(xml_str)

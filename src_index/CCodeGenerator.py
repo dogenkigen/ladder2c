@@ -34,7 +34,7 @@ class CCodeGenerator:
         #Add includes
         self.code = self.config.get("base", "header") + "\n"
         for include in string.split(self.config.get("base", "includes"), " "):
-            self.code = self.code + "#include <" + include + ">\n"
+            self.code = self.code + "#include &lt" + include + "&gt\n"
             
         #Add defines
         self.code = self.code + "\n"
