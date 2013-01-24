@@ -41,9 +41,17 @@ class CCodeGenerator:
         for define in string.split(self.config.get("base", "defines"), ","):
             self.code = self.code + define + "\n"
         
+        #Add variables
+        self.code = self.code + "\n"
+        self.code = self.code + self.config.get("base", "variables")
+        
         #Add functions
         self.code = self.code + "\n"
         self.code = self.code + self.config.get("base", "functions")
+        
+        #Add io
+        self.code = self.code + "\n"
+        self.code = self.code + self.config.get("base", "io")
             
         #Add delay stuff
         if self.delay:
@@ -51,6 +59,9 @@ class CCodeGenerator:
             
         #Start main function
         self.code = self.code + "int main(void){"
+        
+        #Init GPIO
+        self.code = self.code + "init_gpio();"
         
         #Init delay
         if self.delay:
