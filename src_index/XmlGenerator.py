@@ -24,11 +24,11 @@ class XmlGenerator():
         self._add_to_document('<elements>')
         for obj in self.dict_elems:
             tmp = self.dict_elems[obj]
-            if(tmp['item_type'].split('.')[0]=='open_contact'):
+            if(tmp['item_type'].split('.')[0]=='open_contact' and not tmp['item_name'][0] in ['T', 'C', 'R', 'Y']):
                 xml_str = '<contact id="%s" normal="true" />'%tmp['item_name']
                 if(self.out.find(xml_str)==-1):
                     self._add_to_document(xml_str)
-            elif(tmp['item_type'].split('.')[0]=='close_contact'):
+            elif(tmp['item_type'].split('.')[0]=='close_contact' and not tmp['item_name'][0] in ['T', 'C', 'R', 'Y']):
                 xml_str = '<contact id="%s" normal="false" />'%tmp['item_name']
                 if(self.out.find(xml_str)==-1):
                     self._add_to_document(xml_str)
@@ -53,16 +53,7 @@ class XmlGenerator():
     
     def _add_to_document(self, text):
         self.out = self.out+"\n"+text
-        
-    def add_element(self, name, attrs):
-        '''
-        <elem id="x1" />
-        '''
-        self._add_to_document('<' + name)
-        for (name, value) in attrs.items():
-            self._add_to_document(' %s=%s' % (name, value))
-        self._add_to_document(' />')
-    
+           
     
     def adjust_data(self, data_objs):
         for i in range(0, len(data_objs)):
@@ -350,7 +341,10 @@ class XmlGenerator():
             # top and down
             t = self.get_cell_obj(cell.id_cell, cell.id_row-1)
             d = self.get_cell_obj(cell.id_cell, cell.id_row+1)
-            return [t, d]
+            if(d.item_type == 'top-right' or self.get_cell_obj(d.id_cell, d.id_row+1)== 'top-right'):
+                return [t]
+            else:
+                return [t, d]
         elif(cell.item_type == 'ver-right' and prev_cell == self.get_cell_obj(cell.id_cell, cell.id_row+1) ) or \
              (cell.item_type == 'top-right' and prev_cell == self.get_cell_obj(cell.id_cell+1, cell.id_row)) or \
              (cell.item_type == 'ver' and prev_cell == self.get_cell_obj(cell.id_cell, cell.id_row+1)):
@@ -419,6 +413,8 @@ class Path():
         if(cell.item_type not in ['coil', 'set', 'reset', 'timer', 'counter', 'register']):
             self.elem_num += 1
             tmp = '<elem id="%s" />'%cell.item_name
+            if(cell.item_type=='close_contact'):
+                tmp = '<not>\n%s\n</not>'%tmp
             if(self.elem_num == 1):
                 self.elems = tmp
             elif(self.elem_num == 2):

@@ -32,6 +32,10 @@
 		                	<div class="span6">
 		                        <button class="btn" onclick='send_json();' >Generate</button><br><br>
 		                	</div>
+		                	<div class="span8">
+		                        <pre id="CCode" style="display:none;" class="pre-scrollable">
+		                        </pre>
+		                    </div>
 	                	</div>
 	                </fieldset>
                     <canvas id="canvas1" width="600" height="400"
@@ -171,12 +175,14 @@
                 if(this.item_type != 'None'){
 
                     var img_view = new Image();
-                    img_view.src = '/static/' + this.item_type;
                     a = ["timer","register","counter"]
                     for (i in a){
                     	if(this.item_type==a[i]+".jpeg"){
                     		img_view.src = '/static/instruction.jpeg';
                     	}
+                    }
+                    if(img_view.src == ''){
+                    	img_view.src = '/static/' + this.item_type;                    	
                     }
                     ctx.drawImage(img_view, this.x, this.y);
 
@@ -583,13 +589,22 @@
             }
             function send_json(){
             	var msg = document.getElementById("msg");
+            	var ccode = document.getElementById("CCode");
 			    var hr = new XMLHttpRequest();
 			    hr.open("POST", "{{url_for('get_json')}}", true);
 			    hr.setRequestHeader("Content-type", "application/json;");
 			    hr.onreadystatechange = function() {
 			   		if(hr.readyState == 4 && hr.status == 200) {
 			   			a = hr.responseText;
-			   			msg.innerHTML = a;
+			   			m = a.indexOf("[msg]")
+			   			if (m != -1){
+				   			c = a.indexOf("[ccode]")
+				   			msg.innerHTML = a.substring(m+5, c);
+				   			ccode.innerHTML = a.substring(c+7);
+				   			ccode.style.display = 'block';
+				   		}else{
+				   			msg.innerHTML = a
+				   		}
 			   		}
 			   	}	
 			   

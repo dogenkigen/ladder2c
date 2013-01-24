@@ -12,9 +12,24 @@ config = ConfigParser()
 # just for now. should load from form
 config.readfp(app.open_resource("conf/stm32f103vct6.conf", 'r'))
 
+def getInput(id, elements):
+	if elements.find(".//contact[@id='" + id + "']").attrib["normal"] == "true":
+		return config.get("elements_input", id)
+	else:
+		return "!(" + config.get("elements_input", id) + ")"
+
+def getOutput(id, elements):
+	if id.startswith("Y"):
+		if elements.find(".//coil[@id='" + id + "']").attrib["type"] == "set":
+			return config.get("elements_output", id + "_SET")
+		else:
+			return config.get("elements_output", id + "_RESET")
+	else:
+		return config.get("elements_output", id)
+
 def parseXml(xml):
 	elements = xml.find("elements")
-	if elements.find(".//timer[@id='T1']") is not None:
+	if elements.find(".//timer") is not None:
 		gen = CCodeGenerator.CCodeGenerator(config, True)
 	else:
 		gen = CCodeGenerator.CCodeGenerator(config, False)
@@ -23,41 +38,41 @@ def parseXml(xml):
 	    if output.attrib["id"]. startswith("T"):
 	        id = output.attrib["id"]
 	        timer = elements.find(".//timer[@id='" + id + "']")
-	        gen.appendCondtion(recurse(output.find(".*")), gen.getTimer(timer.attrib["delay"], timer.attrib["unit"]))  # TODO
+	        gen.appendCondtion(recurse(output.find(".*"), elements), gen.getTimer(timer.attrib["delay"], timer.attrib["unit"]))  # TODO
 	    else:
-	        gen.appendCondtion(recurse(output.find(".*")), config.get("elements", output.attrib["id"]))
-	
+	        gen.appendCondtion(recurse(output.find(".*"), elements), getOutput(output.attrib["id"], elements))
+
 	return gen.getCode()
 
-def recurse(object):
+def recurse(object, elements):
 	"""Recursive method for parsing XML program"""
 	if len(object) > 1:
 		elemList = []
 		for oneElem in object:
 		    if oneElem.tag == "elem":
-		        elemList.append(config.get("elements", oneElem.attrib["id"]))
+		        elemList.append(getInput(oneElem.attrib["id"], elements))
 		    else:
-				elemList.append(recurse(oneElem))
-		
+				elemList.append(recurse(oneElem, elements))
+
 		if object.tag == "and":
 		    return LogicCondition.LogicCondition.logicMultiple(elemList, "&&")
 		if object.tag == "or":
 		    return LogicCondition.LogicCondition.logicMultiple(elemList, "||")        
 	else:
 		if object.tag == "elem":
-		    return config.get("elements", object.attrib["id"])
+		    return getInput(object.attrib["id"], elements)#config.get("elements", object.attrib["id"])
 		if object.tag == "not":
-		    return LogicCondition.LogicCondition.logicOne(recurse(object.find(".*")), "!")
+		    return LogicCondition.LogicCondition.logicOne(recurse(object.find(".*"), elements), "!")
     
 	raise Exception("Program is invalid!")
 
 def loadParser():
 	#load files
 	fxsd = app.open_resource('schema.xsd', 'r')
-	
+
 	#create parser which will be validate xsd schema
 	parser = etree.XMLParser(dtd_validation=True)
-	
+
 	#convert files to strings
 	xsdStr = ""
 	for line in fxsd:
@@ -74,6 +89,7 @@ def index():
 @app.route("/get_json", methods=['POST', 'GET'])
 def get_json():
 	data = request.json
+	ccode = ''
 	try:
 		try:
 			xml = XmlGenerator.XmlGenerator()
@@ -86,8 +102,12 @@ def get_json():
 			print outputXml
 			print "-----------XML--------------"
 			print "-----------C CODE--------------"
-			print parseXml(etree.fromstring(outputXml, loadParser()))
+			ccode = parseXml(etree.fromstring(outputXml, loadParser()))
+			print ccode
 			print "-----------C CODE--------------"
+			f = app.open_instance_resource('tmp', 'w')
+			f.write(ccode)
+			f.close()
 			
 		except NoOutputsError:
 			return 'Error! No output'
@@ -101,7 +121,14 @@ def get_json():
 	finally:
 		Node.node_counter = 0
         Path.path_counter = 0
-        return '<div style="color:green">Conversion successful!</div>'
+        import os
+        eval("os.system('astyle %s/tmp')"%app.instance_path)
+        f = app.open_instance_resource('tmp', 'rb')
+        ccode = f.read()
+        msg = '''[msg]<div style=\'color:green\'>Conversion successful!</div>
+        		[ccode]%s'''%ccode
+        return msg
+		
 	
 	
 
