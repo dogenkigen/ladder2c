@@ -11,17 +11,26 @@ from src_index import LogicCondition
 config = ConfigParser()
 # just for now. should load from form
 config.readfp(app.open_resource("conf/stm32f103vct6.conf", 'r'))
+from flask import url_for, render_template, request, jsonify
+from src_index import app
+from src_index import XmlGenerator
+from XmlGenerator import NoOutputsError, CellError, Node, Path
+import validate
+from ConfigParser import ConfigParser
+from lxml import etree
+from src_index import CCodeGenerator
+from src_index import LogicCondition 
+
+config = ConfigParser()
+# just for now. should load from form
+config.readfp(app.open_resource("conf/stm32f103vct6.conf", 'r'))
 
 def getInput(id, elements):
 	if elements.find(".//contact[@id='" + id + "']").attrib["normal"] == "true":
 		return config.get("elements_input", id)
 	else:
 		return "!(" + config.get("elements_input", id) + ")"
-<<<<<<< HEAD
 
-=======
-	
->>>>>>> main-ladder/master
 def getOutput(id, elements):
 	if id.startswith("Y"):
 		if elements.find(".//coil[@id='" + id + "']").attrib["type"] == "set":
@@ -45,15 +54,9 @@ def parseXml(xml):
 	        gen.appendCondtion(recurse(output.find(".*"), elements), gen.getTimer(timer.attrib["delay"], timer.attrib["unit"]))  # TODO
 	    else:
 	        gen.appendCondtion(recurse(output.find(".*"), elements), getOutput(output.attrib["id"], elements))
-<<<<<<< HEAD
 
 	return gen.getCode()
 
-=======
-	
-	return gen.getCode()
-	
->>>>>>> main-ladder/master
 def recurse(object, elements):
 	"""Recursive method for parsing XML program"""
 	if len(object) > 1:
@@ -63,11 +66,7 @@ def recurse(object, elements):
 		        elemList.append(getInput(oneElem.attrib["id"], elements))
 		    else:
 				elemList.append(recurse(oneElem, elements))
-<<<<<<< HEAD
 
-=======
-		
->>>>>>> main-ladder/master
 		if object.tag == "and":
 		    return LogicCondition.LogicCondition.logicMultiple(elemList, "&&")
 		if object.tag == "or":
