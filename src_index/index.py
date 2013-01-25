@@ -1,4 +1,4 @@
-from flask import url_for, render_template, request, jsonify
+from flask import render_template, request, jsonify
 from src_index import app
 from src_index import XmlGenerator
 from XmlGenerator import NoOutputsError, CellError, Node, Path
@@ -12,20 +12,14 @@ config = ConfigParser()
 # just for now. should load from form
 config.readfp(app.open_resource("conf/stm32f103vct6.conf", 'r'))
 
-def getInput(id, elements):
-	if elements.find(".//contact[@id='" + id + "']").attrib["normal"] == "true":
-		return config.get("elements_input", id)
-	else:
-		return config.get("elements_input", id)
-
-def getOutput(id, elements):
-	if id.startswith("Y"):
-		if elements.find(".//coil[@id='" + id + "']").attrib["type"] == "set":
-			return config.get("elements_output", id + "_SET")
+def getOutput(iD, elements):
+	if iD.startswith("Y"):
+		if elements.find(".//coil[@iD='" + iD + "']").attrib["type"] == "set":
+			return config.get("elements_output", iD + "_SET")
 		else:
-			return config.get("elements_output", id + "_RESET")
+			return config.get("elements_output", iD + "_RESET")
 	else:
-		return config.get("elements_output", id)
+		return config.get("elements_output", iD)
 
 def parseXml(xml):
 	elements = xml.find("elements")
@@ -35,48 +29,45 @@ def parseXml(xml):
 		gen = CCodeGenerator.CCodeGenerator(config, False)
 
 	for output in xml.find("diagram").findall("output"):
-	    if output.attrib["id"]. startswith("T"):
-	        id = output.attrib["id"]
-	        timer = elements.find(".//timer[@id='" + id + "']")
-	        gen.appendCondtion(recurse(output.find(".*"), elements), gen.getTimer(timer.attrib["delay"], timer.attrib["unit"]))  # TODO
-	    else:
-	        gen.appendCondtion(recurse(output.find(".*"), elements), getOutput(output.attrib["id"], elements))
+		if output.attrib["id"]. startswith("T"):
+			iD = output.attrib["id"]
+			timer = elements.find(".//timer[@id='" + iD + "']")
+			gen.appendCondtion(recurse(output.find(".*"), elements), gen.getTimer(timer.attrib["delay"], timer.attrib["unit"]))  # TODO
+		else:
+			gen.appendCondtion(recurse(output.find(".*"), elements), getOutput(output.attrib["id"], elements))
 
 	return gen.getCode()
 
-def recurse(object, elements):
+def recurse(ob, elements):
 	"""Recursive method for parsing XML program"""
-	if len(object) > 1:
+	if len(ob) > 1:
 		elemList = []
-		for oneElem in object:
-		    if oneElem.tag == "elem":
-		        elemList.append(getInput(oneElem.attrib["id"], elements))
-		    else:
+		for oneElem in ob:
+			if oneElem.tag == "elem":
+				elemList.append(config.get("elements_input", oneElem.attrib["id"]))
+			else:
 				elemList.append(recurse(oneElem, elements))
 
-		if object.tag == "and":
-		    return LogicCondition.LogicCondition.logicMultiple(elemList, "&&")
-		if object.tag == "or":
-		    return LogicCondition.LogicCondition.logicMultiple(elemList, "||")        
+		if ob.tag == "and":
+			return LogicCondition.LogicCondition.logicMultiple(elemList, "&&")
+		if ob.tag == "or":
+			return LogicCondition.LogicCondition.logicMultiple(elemList, "||")        
 	else:
-		if object.tag == "elem":
-		    return getInput(object.attrib["id"], elements)#config.get("elements", object.attrib["id"])
-		if object.tag == "not":
-		    return LogicCondition.LogicCondition.logicOne(recurse(object.find(".*"), elements), "!")
-    
+		if ob.tag == "elem":
+			return config.get("elements_input", ob.attrib["id"])
+		if ob.tag == "not":
+			return LogicCondition.LogicCondition.logicOne(recurse(ob.find(".*"), elements), "!")
+
 	raise Exception("Program is invalid!")
 
 def loadParser():
 	#load files
 	fxsd = app.open_resource('schema.xsd', 'r')
 
-	#create parser which will be validate xsd schema
-	parser = etree.XMLParser(dtd_validation=True)
-
 	#convert files to strings
 	xsdStr = ""
 	for line in fxsd:
-	    xsdStr = xsdStr + line
+		xsdStr = xsdStr + line	
 	schema_root = etree.XML(xsdStr)
 	schema = etree.XMLSchema(schema_root)
 	#load schema to parser
@@ -120,14 +111,14 @@ def get_json():
 			Path.path_counter = 0
 	finally:
 		Node.node_counter = 0
-        Path.path_counter = 0
-        import os
-        eval("os.system('astyle %s/tmp')"%app.instance_path)
-        f = app.open_instance_resource('tmp', 'rb')
-        ccode = f.read()
-        msg = '''[msg]<div style=\'color:green\'>Conversion successful!</div>
-        		[ccode]%s'''%ccode
-        return msg
+		Path.path_counter = 0
+		import os
+		eval("os.system('astyle %s/tmp')"%app.instance_path)
+		f = app.open_instance_resource('tmp', 'rb')
+		ccode = f.read()
+		msg = '''[msg]<div style=\'color:green\'>Conversion successful!</div>
+				[ccode]%s'''%ccode
+		return msg
 		
 	
 	
