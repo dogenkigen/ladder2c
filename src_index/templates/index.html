@@ -1,713 +1,755 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
-    <head>
-        <title>Ladder2c</title>
-        <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.1.1/css/bootstrap.min.css" />
-        <script src="http://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.1.1/bootstrap.min.js" ></script>  
-    </head>
-    <body>
-        <br>
-        <div class="container">
-            <div class="row">
-                <h1>Ladder2c</h1>
-                <!-- There is no such functionality now but it should be-->
-                <div class="span8">
-	            	<fieldset>
-	                	<legend>Generate C code</legend>
-                		<div class="row">   
-                			<div class="span3"> 
-		                        <label>Processor type: </label>
-		                        <select>
-		                            <option>stm32f103vct6</option>
-		                        </select>
-		                    </div>
-		                    <div class="span3"> 
-		                        <label>Code style: </label>
-		                        <select>
-		                            <option>Linux</option>
-		                            <option>Stallman</option>
-		                            <option>GNU</option>
-		                        </select>
-		                	</div>
-		                	<div class="span6">
-		                        <button class="btn" onclick='send_json();' >Generate</button><br><br>
-		                	</div>
-	                	</div>
-	                </fieldset>
-                    <canvas id="canvas1" width="600" height="400"
-                            style="border: solid 2px"> Text error </canvas>
-                </div>
-                <div class="span3">
-                    <fieldset>
-                        <legend>Add elements</legend>
-                        <label>Type</label>
-                        <select id='item_type' onchange='select(this.value)'>
-                            <option value='open_contact' selected >-| |- contact</option>
-                            <option value='close_contact' >-|/|- close contact</option>
-                            <option value='coil' >-( )- coil</option>
-                            <option value='timer' >-[ ]- timer</option>
-                            <option value='register' >-[ ]- register</option>
-                            <option value='counter' >-[ ]- counter</option>
-                        </select> 
-                        <div id="div_id">
-	                        <label>Id: </label><!-- TODO change this label name and add validation to the field! -->
-	                        <input type='text' id='item_name' placeholder="Enter element name here."/>
-	                    </div>
-	                    <div id="div_type" style="display:none;">
-	                        <label>set/reset: </label>
-							<select id="set_type">
-	                        	<option value="set">set</option>
-	                        	<option value="reset">reset</option>
-	                        </select>
-	                    </div>
-	                    <div id="div_delay" style="display:none;">
-	                        <label>Delay: </label>
-	                        <input type='text' id='item_delay' placeholder="Enter timer delay here."/>
-	                    </div>
-	                    <div id="div_countTo" style="display:none;">
-	                        <label>Count to: </label>
-	                        <input type='text' id='item_countTo' placeholder="Enter count value here."/>
-	                    </div>
-	                    <div id="div_target" style="display:none;">
-	                        <label>Target: </label>
-	                        <select id="item_target">
-	                        	<option value="true">true</option>
-	                        	<option value="false">false</option>
-	                        </select>
-	                    </div>
-	                   
-                        <button onclick='add_item();' class="btn">Add</button>
-                        <hr>
-                        <label>Branch:</label>                        
-                        <div class="btn-toolbar">
-                        	<div class="btn-group">                      
-                        		<a class="btn btn-mini" href="javascript:addbranch('hor');">
-                        			<img src="{{url_for('static',filename='branch/hor.jpeg')}}" width="50%">
-                        		</a>
-                        		<a class="btn btn-mini" href="javascript:addbranch('ver');">
-                        			<img src="{{url_for('static',filename='branch/ver.jpeg')}}" width="50%">
-                        		</a>
-                        		<a class="btn btn-mini" href="javascript:addbranch('hor-down');">
-                        			<img src="{{url_for('static',filename='branch/hor-down.jpeg')}}" width="50%">
-                        		</a>
-                        		<a class="btn btn-mini" href="javascript:clear_cell();">
-                        			<img src="{{url_for('static',filename='branch/clear.jpeg')}}" width="50%">
-                        		</a>
-                        	</div></br>
-                        	<div class="btn-group">
-                        		<a class="btn btn-mini" href="javascript:addbranch('ver-right');">
-                        			<img src="{{url_for('static',filename='branch/ver-right.jpeg')}}" width="50%">
-                        		</a>
-                        		<a class="btn btn-mini" href="javascript:addbranch('ver-left');">
-                        			<img src="{{url_for('static',filename='branch/ver-left.jpeg')}}" width="50%">
-                        		</a>
-                        		<a class="btn btn-mini" href="javascript:addbranch('top-right');">
-                        			<img src="{{url_for('static',filename='branch/top-right.jpeg')}}" width="50%">
-                        		</a>
-                        		<a class="btn btn-mini" href="javascript:addbranch('left-top');">
-                        			<img src="{{url_for('static',filename='branch/left-top.jpeg')}}" width="50%">
-                        		</a>
-                        	</div></br>
-                        	<div class="btn-group">
-                        		<a class="btn btn-mini" href="javascript:addbranch('left-down');">
-                        			<img src="{{url_for('static',filename='branch/left-down.jpeg')}}" width="50%">
-                        		</a>
-                        		<a class="btn btn-mini" href="javascript:addbranch('down-right');">
-                        			<img src="{{url_for('static',filename='branch/down-right.jpeg')}}" width="50%">
-                        		</a>
-                        	</div>
-                        </div>
+<head>
+<title>Ladder2c</title>
+<!-- Bootstrap -->
+<link
+	href="http://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.1.1/css/bootstrap.min.css"
+	rel="stylesheet" media="screen">
+</head>
+<body style="background-color: white;">
+	<script src="http://code.jquery.com/jquery-latest.js"></script>
+	<script
+		src="http://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.1.1/bootstrap.min.js"></script>
+
+	<div class="container">
+		<div class="row">
+		
+			<legend><h1>Ladder2c</h1></legend>
+			<div class="span8" style="padding-left: 20px">
+
+				<canvas id="canvas1" width="600" height="400"
+					style="border: solid 2px"> Text error </canvas>
+				<fieldset>
+					<legend>Generate C code</legend>
+					<div class="row">
+						<div class="span3">
+							<label>Processor type: </label> <select>
+								<option>stm32f103vct6</option>
+							</select>
+						</div>
+						<div class="span3">
+							<label>Code style: </label> <select>
+								<option>Linux</option>
+								<option>Stallman</option>
+								<option>GNU</option>
+							</select>
+						</div>
+						<div class="span6">
+							<button class="btn btn-large btn-primary" onclick='send_json();'>Generate</button>
+						</div>
+					</div>
+				</fieldset>
+			</div>
+			<div class="span3">
+				<fieldset>
+					<legend>Add elements</legend>
+					<label>Type</label> <select id='item_type'
+						onchange='select(this.value)'>
+						<option value='open_contact' selected>-| |- contact</option>
+						<option value='close_contact'>-|/|- close contact</option>
+						<option value='coil'>-( )- coil</option>
+						<option value='timer'>-[ ]- timer</option>
+						<option value='register'>-[ ]- register</option>
+						<option value='counter'>-[ ]- counter</option>
+					</select>
+					<div id="div_id">
+						<label>Id: </label>
+						<!-- TODO change this label name and add validation to the field! -->
+						<input type='text' id='item_name'
+							placeholder="Enter element name here." />
+					</div>
+					<div id="div_type" style="display: none;">
+						<label>set/reset: </label> <select id="set_type">
+							<option value="set">set</option>
+							<option value="reset">reset</option>
+						</select>
+					</div>
+					<div id="div_delay" style="display: none;">
+						<label>Delay: </label> <input type='text' id='item_delay'
+							placeholder="Enter timer delay here." />
+					</div>
+					<div id="div_countTo" style="display: none;">
+						<label>Count to: </label> <input type='text' id='item_countTo'
+							placeholder="Enter count value here." />
+					</div>
+					<div id="div_target" style="display: none;">
+						<label>Target: </label> <select id="item_target">
+							<option value="true">true</option>
+							<option value="false">false</option>
+						</select>
+					</div>
+
+					<button onclick='add_item();' class="btn">Add</button>
+					<hr>
+					<label>Branch:</label>
+					<div class="btn-toolbar">
+						<div class="btn-group">
+							<a class="btn btn-mini" href="javascript:addbranch('hor');">
+								<img src="{{url_for('static',filename='branch/hor.jpeg')}}"
+								width="50%">
+							</a> <a class="btn btn-mini" href="javascript:addbranch('ver');">
+								<img src="{{url_for('static',filename='branch/ver.jpeg')}}"
+								width="50%">
+							</a> <a class="btn btn-mini" href="javascript:addbranch('hor-down');">
+								<img src="{{url_for('static',filename='branch/hor-down.jpeg')}}"
+								width="50%">
+							</a> <a class="btn btn-mini" href="javascript:clear_cell();"> <img
+								src="{{url_for('static',filename='branch/clear.jpeg')}}"
+								width="50%">
+							</a>
+						</div>
+						</br>
+						<div class="btn-group">
+							<a class="btn btn-mini" href="javascript:addbranch('ver-right');">
+								<img
+								src="{{url_for('static',filename='branch/ver-right.jpeg')}}"
+								width="50%">
+							</a> <a class="btn btn-mini" href="javascript:addbranch('ver-left');">
+								<img src="{{url_for('static',filename='branch/ver-left.jpeg')}}"
+								width="50%">
+							</a> <a class="btn btn-mini"
+								href="javascript:addbranch('top-right');"> <img
+								src="{{url_for('static',filename='branch/top-right.jpeg')}}"
+								width="50%">
+							</a> <a class="btn btn-mini" href="javascript:addbranch('left-top');">
+								<img src="{{url_for('static',filename='branch/left-top.jpeg')}}"
+								width="50%">
+							</a>
+						</div>
+						</br>
+						<div class="btn-group">
+							<a class="btn btn-mini" href="javascript:addbranch('left-down');">
+								<img
+								src="{{url_for('static',filename='branch/left-down.jpeg')}}"
+								width="50%">
+							</a> <a class="btn btn-mini"
+								href="javascript:addbranch('down-right');"> <img
+								src="{{url_for('static',filename='branch/down-right.jpeg')}}"
+								width="50%">
+							</a>
+						</div>
+					</div>
+					<br>
+					<div id="msg" class="well" style="color: red;"></div>
+
+					<hr>
+					<button onclick='clear_all();' class="btn">Clear</button>
+					<button onclick='add_line();' class="btn">Append line</button>
+					<!-- <div class="span2">
+						<a href="javascript:load_example(1)">load example 1</a><br> <a
+							href="javascript:load_example(2)">load example 2</a><br>
 						<br>
-                        <div id="msg" class="well" style="color:red;"></div>
-						
-                        <hr>
-                        <button onclick='clear_all();' class="btn">Clear</button>
-                        <button onclick='add_line();' class="btn">Append line</button>
-	                	<div class="span2">
-							<a href="javascript:load_example(1)">load example 1</a><br>
-                    		<a href="javascript:load_example(2)">load example 2</a><br><br>
-	                	</div>
-                        <div style="display:none"><!-- prevents from elem display delay -->
-	                        <img src="{{url_for('static',filename='open_contact.jpeg')}}" width="50%">
-	                        <img src="{{url_for('static',filename='close_contact.jpeg')}}" width="50%">
-	                        <img src="{{url_for('static',filename='coil.jpeg')}}" width="50%">
-	                        <img src="{{url_for('static',filename='instruction.jpeg')}}" width="50%">
-	                    </div>
-                    </fieldset>
-                </div>
-            	<div id="Code" class="span12" style="display:none;">
-            		<h3>C code</h3>
-                    <pre id="CCode" style="display:none;" class="pre-scrollable">
+					</div> -->
+					<br>
+					<br>
+					<div class="btn-group">
+						<a class="btn btn-primary" href="#"><i class="icon-download"></i>
+							Load example</a> <a class="btn btn-primary dropdown-toggle"
+							data-toggle="dropdown" href="#"><span class="caret"></span></a>
+						<ul class="dropdown-menu">
+							<li><a href="javascript:load_example(1)">Example #1</a></li>
+							<li><a href="javascript:load_example(2)">Example #2</a></li>
+						</ul>
+					</div>
+
+					<div style="display: none">
+						<!-- prevents from elem display delay -->
+						<img src="{{url_for('static',filename='open_contact.jpeg')}}"
+							width="50%"> <img
+							src="{{url_for('static',filename='close_contact.jpeg')}}"
+							width="50%"> <img
+							src="{{url_for('static',filename='coil.jpeg')}}" width="50%">
+						<img src="{{url_for('static',filename='instruction.jpeg')}}"
+							width="50%">
+					</div>
+				</fieldset>
+			</div>
+			<div id="Code" class="span12" style="display: none;">
+				<h3>C code</h3>
+				<pre id="CCode" style="display: none;" class="pre-scrollable">
                     </pre>
-                </div>
-            </div>
+			</div>
+		</div>
 
-        </div>
+	</div>
 
-        <script>
-            function Shape(x, y, w, h, fill, id) {
-                // This is a very simple and unsafe constructor. All we're doing is checking if the values exist.
-                // "x || 0" just means "if there is a value for x, use that. Otherwise use 0."
-                // But we aren't checking anything else! We could put "Lalala" for the value of x 
-                this.x = x || 0;
-                this.y = y || 0;
-                this.w = w || 1;
-                this.h = h || 1;
-                this.fill = fill || '#AAAAAA';
-                this.id_row;
-                this.id_cell;
-                this.item_id = id;
-                this.item_type = 'None';
-  				this.item_name = 'None';
-  				this.item_set_type = 'None';
-  				this.item_target = 'None';
-  				this.item_delay = 'None';
-  				this.item_countTo = 'None';
-  				this.img = 'None';
-            }
+	<script>
+		function Shape(x, y, w, h, fill, id) {
+			// This is a very simple and unsafe constructor. All we're doing is checking if the values exist.
+			// "x || 0" just means "if there is a value for x, use that. Otherwise use 0."
+			// But we aren't checking anything else! We could put "Lalala" for the value of x 
+			this.x = x || 0;
+			this.y = y || 0;
+			this.w = w || 1;
+			this.h = h || 1;
+			this.fill = fill || '#AAAAAA';
+			this.id_row;
+			this.id_cell;
+			this.item_id = id;
+			this.item_type = 'None';
+			this.item_name = 'None';
+			this.item_set_type = 'None';
+			this.item_target = 'None';
+			this.item_delay = 'None';
+			this.item_countTo = 'None';
+			this.img = 'None';
+		}
 
-            // Draws this shape to a given context
-            Shape.prototype.draw = function(ctx) {
-                ctx.beginPath();
-                ctx.fillStyle = this.fill;
-                //if (this.item_type == 'None') {
-                    //ctx.fillRect(this.x, this.y, this.w, this.h);
-                //} else {
-                if(this.item_type != 'None'){
+		// Draws this shape to a given context
+		Shape.prototype.draw = function(ctx) {
+			ctx.beginPath();
+			ctx.fillStyle = this.fill;
+			//if (this.item_type == 'None') {
+			//ctx.fillRect(this.x, this.y, this.w, this.h);
+			//} else {
+			if (this.item_type != 'None') {
 
-                    var img_view = new Image();
-                    a = ["timer","register","counter"]
-                    for (i in a){
-                    	if(this.item_type==a[i]+".jpeg"){
-                    		img_view.src = '/static/instruction.jpeg';
-                    	}
-                    }
-                    if(img_view.src == ''){
-                    	img_view.src = '/static/' + this.item_type;                    	
-                    }
-                    ctx.drawImage(img_view, this.x, this.y);
-
-                    ctx.fillstyle = 'black';
-                    //ctx.font = 'italic bold 30px sans-serif';
-                    ctx.textBaseline = 'top';
-                    if(this.item_name != 'None'){ 
-                    	ctx.fillText(this.item_name, this.x, this.y);
-                    }
-                }
-                ctx.strokeStyle = 'lightred'; // red
-                ctx.lineWidth = 0.1;
-                ctx.strokeRect(this.x, this.y, this.w, this.h);
-                ctx.closePath();
-            }
-
-            // Determine if a point is inside the shape's bounds
-            Shape.prototype.contains = function(mx, my) {
-                // All we have to do is make sure the Mouse X,Y fall in the area between
-                // the shape's X and (X + Height) and its Y and (Y + Height)
-                return (this.x <= mx) && (this.x + this.w >= mx) && (this.y <= my)
-                    && (this.y + this.h >= my);
-            }
-
-            function CanvasState(canvas) {
-                // **** First some setup! ****
-
-                this.canvas = canvas;
-                this.width = canvas.width;
-                this.height = canvas.height;
-                this.ctx = canvas.getContext('2d');
-                // This complicates things a little but but fixes mouse co-ordinate problems
-                // when there's a border or padding. See getMouse for more detail
-                var stylePaddingLeft, stylePaddingTop, styleBorderLeft, styleBorderTop;
-                if (document.defaultView && document.defaultView.getComputedStyle) {
-                    this.stylePaddingLeft = parseInt(document.defaultView
-                    .getComputedStyle(canvas, null)['paddingLeft'], 10) || 0;
-                    this.stylePaddingTop = parseInt(document.defaultView
-                    .getComputedStyle(canvas, null)['paddingTop'], 10) || 0;
-                    this.styleBorderLeft = parseInt(document.defaultView
-                    .getComputedStyle(canvas, null)['borderLeftWidth'], 10) || 0;
-                    this.styleBorderTop = parseInt(document.defaultView
-                    .getComputedStyle(canvas, null)['borderTopWidth'], 10) || 0;
-                }
-                // Some pages have fixed-position bars (like the stumbleupon bar) at the top or left of the page
-                // They will mess up mouse coordinates and this fixes that
-                var html = document.body.parentNode;
-                this.htmlTop = html.offsetTop;
-                this.htmlLeft = html.offsetLeft;
-
-                // **** Keep track of state! ****
-                this.valid = false; // when set to false, the canvas will redraw everything
-
-                var a = 50; // cell width
-                var b = 50; // cell hight
-                var left_margin = 20;
-                var top_margin = 10;
-                var canvas_width = document.getElementById('canvas1').width;
-                var canvas_height = document.getElementById('canvas1').height;
-                var n = Math.floor((canvas_width - left_margin) / a); // cells count in row
-                var m = Math.floor((canvas_height - top_margin) / b); //rows count
-
-                this.cells = new Array(m);
-                for ( var i = 0; i < m; i++) {
-                    for ( var j = 0; j < n; j++) {
-                        this.cells[i] = new Array(n);
-                    }
-                }
-
-                this.dragging = false; // Keep track of when we are dragging
-                // the current selected object. In the future we could turn this into an array for multiple selection
-                this.selection = null;
-                this.dragoffx = 0; // See mousedown and mousemove events for explanation
-                this.dragoffy = 0;
-
-                // **** Then events! ****
-
-                // This is an example of a closure!
-                // Right here "this" means the CanvasState. But we are making events on the Canvas itself,
-                // and when the events are fired on the canvas the variable "this" is going to mean the canvas!
-                // Since we still want to use this particular CanvasState in the events we have to save a reference to it.
-                // This is our reference!
-                var myState = this;
-
-                //fixes a problem where double clicking causes text to get selected on the canvas
-                canvas.addEventListener('selectstart', function(e) {
-                    e.preventDefault();
-                    return false;
-                }, false);
-                // Up, down, and move are for dragging
-                canvas.addEventListener('mousedown', function(e) {
-                    var mouse = myState.getMouse(e);
-                    var mx = mouse.x;
-                    var my = mouse.y;
-
-                    var cells = myState.cells;
-                    var l = cells.length;
-                    var k = cells[0].length;
-
-                    for ( var i = l - 1; i >= 0; i--) {
-                        for ( var j = k - 1; j >= 0; j--) {
-                            if (cells[i][j].contains(mx, my)) {
-                                var mySel = cells[i][j];
-                                myState.dragoffx = mx - mySel.x;
-                                myState.dragoffy = my - mySel.y;
-                                myState.selection = mySel;
-                                myState.valid = false;
-                                id_cell = j;
-                                id_row = i;
-                                return;
-                            }
-                        }
-                    }
-                    // havent returned means we have failed to select anything.
-                    // If there was an object selected, we deselect it
-                    if (myState.selection) {
-                        myState.selection = null;
-                        myState.valid = false; // Need to clear the old selection border
-                    }
-                }, true);
-                canvas.addEventListener('mousemove', function(e) {
-                    if (myState.dragging) {
-                        var mouse = myState.getMouse(e);
-                        // We don't want to drag the object by its top-left corner, we want to drag it
-                        // from where we clicked. Thats why we saved the offset and use it here
-                        myState.selection.x = mouse.x - myState.dragoffx;
-                        myState.selection.y = mouse.y - myState.dragoffy;
-                        myState.valid = false; // Something's dragging so we must redraw
-                    }
-                }, true);
-                canvas.addEventListener('mouseup', function(e) {
-                    myState.dragging = false;
-                }, true);
-                // double click for making new shapes
-                //  canvas.addEventListener('dblclick', function(e) {
-                //    var mouse = myState.getMouse(e);
-                //    myState.addShape(new Shape(mouse.x - 10, mouse.y - 10, 20, 20, 'rgba(0,255,0,.6)'));
-                //  }, true);
-
-                // **** Options! ****
-
-                this.selectionColor = '#CC0000';
-                this.selectionWidth = 2;
-                this.interval = 20;
-                setInterval(function() {
-                    myState.draw();
-                }, myState.interval);
-            }
-
-            CanvasState.prototype.addShape = function(shape, id_cell, id_row) {
-                this.cells[id_row][id_cell] = shape;
-                this.cells[id_row][id_cell].id_cell = id_cell;
-                this.cells[id_row][id_cell].id_row = id_row;
-                this.valid = false;
-            }
-
-            CanvasState.prototype.clear = function() {
-                this.ctx.clearRect(0, 0, this.width, this.height);
-            }
-
-            // While draw is called as often as the INTERVAL variable demands,
-            // It only ever does something if the canvas gets invalidated by our code
-            CanvasState.prototype.draw = function() {
-                // if our state is invalid, redraw and validate!
-                if (!this.valid) {
-
-                    var ctx = this.ctx;
-                    var cells = this.cells;
-                    this.clear();
-
-                    // ** Add stuff you want drawn in the background all the time here **
-
-                    // draw all shapes
-
-                    var l = cells.length;
-                    var k = cells[0].length;
-                    for ( var i = 0; i < l; i++) {
-                        for ( var j = 0; j < k; j++) {
-                            var shape = cells[i][j];
-                            // We can skip the drawing of elements that have moved off the screen:
-                            //if (shape.x > this.width || shape.y > this.height ||
-                            // shape.x + shape.w < 0 || shape.y + shape.h < 0) continue;
-                            cells[i][j].draw(ctx);
-                        }
-                    }
-                    // draw selection
-                    // right now this is just a stroke along the edge of the selected Shape
-                    if (this.selection != null) {
-                        ctx.beginPath();
-                        ctx.strokeStyle = this.selectionColor;
-                        ctx.lineWidth = this.selectionWidth;
-                        var mySel = this.selection;
-                        ctx.strokeRect(mySel.x, mySel.y, mySel.w, mySel.h);
-                        ctx.closePath();
-                        ctx.strokeStyle = 'black';
-                        
-                        var msg = document.getElementById('msg');
-                        if(mySel.item_type != '' && mySel.item_type != 'None' && mySel.item_name != 'None'){
-                        	var a = '<div style="color:blue">';
-                        	var type = mySel.item_type.split('.')[0];
-                        	a += 'Element selected<br>Type: '+type+'<br>';
-                        	a += 'Id: '+mySel.item_name+'<br>';
-                        	if(type=='coil'){
-                        		a += 'Set/reset: '+mySel.item_set_type;
-                        	}if(type=='timer'){
-                        		a += 'Delay: '+ mySel.item_delay;
-                        	}if(type=='counter'){
-                        		a += 'Target: '+ mySel.item_target;
-                        		a += '<br>Count to: '+ mySel.item_countTo;
-                        	}
-                        	a += '</div>';
-                        	msg.innerHTML = a;
-                        }else{
-                        	msg.innerHTML = '';
-                        }
-                    }
-
-                    // ** Add stuff you want drawn on top all the time here **
-
-                    this.valid = true;
-                }
-            }
-
-            // Creates an object with x and y defined, set to the mouse position relative to the state's canvas
-            // If you wanna be super-correct this can be tricky, we have to worry about padding and borders
-            CanvasState.prototype.getMouse = function(e) {
-                var element = this.canvas, offsetX = 0, offsetY = 0, mx, my;
-
-                // Compute the total offset
-                if (element.offsetParent !== undefined) {
-                    do {
-                        offsetX += element.offsetLeft;
-                        offsetY += element.offsetTop;
-                    } while ((element = element.offsetParent));
-                }
-
-                // Add padding and border style widths to offset
-                // Also add the _$tag_ offsets in case there's a position:fixed bar
-                offsetX += this.stylePaddingLeft + this.styleBorderLeft
-                    + this.htmlLeft;
-                offsetY += this.stylePaddingTop + this.styleBorderTop
-                    + this.htmlTop;
-
-                mx = e.pageX - offsetX;
-                my = e.pageY - offsetY;
-
-                // We return a simple javascript object (a hash) with x and y defined
-                return {
-                    x : mx,
-                    y : my
-                };
-            }
-            CanvasState.prototype.addItem = function(id_cell, id_row, item_type,
-            item_name, item_set_type, item_target, item_delay, item_countTo) {
-                this.cells[id_row][id_cell].fill = 'black';
-                if(item_type!=""){
-                	this.cells[id_row][id_cell].item_type = item_type+'.jpeg';
-                }else{
-                	this.cells[id_row][id_cell].item_type = 'None';
-                }
-                if(item_delay!=""){
-					this.cells[id_row][id_cell].item_delay = item_delay;
-				}else{
-					this.cells[id_row][id_cell].item_delay = 'None';
-				}
-				if(item_countTo!=""){
-					this.cells[id_row][id_cell].item_countTo = item_countTo;
-				}else{
-					this.cells[id_row][id_cell].item_countTo = 'None';
-				}
-                if(item_target!=""){
-					this.cells[id_row][id_cell].item_target = item_target;
-				}else{
-					this.cells[id_row][id_cell].item_target = 'None';
-				}
-                if(item_set_type!=""){
-					this.cells[id_row][id_cell].item_set_type = item_set_type;
-				}else{
-					this.cells[id_row][id_cell].item_set_type = 'None';
-				}
-				
-				
-				this.cells[id_row][id_cell].item_name = item_name;
-                this.valid = false;
-            }
-            CanvasState.prototype.addLine = function(id_row) {
-
-                act_row = this.cells.length;
-                emp = new Array(11);
-                this.cells.push(emp);
-
-                for ( var i = 0; i < this.cells[0].length; i++) {
-                    this.cells[act_row][i] = new Shape(21 + (50 * i),
-                    11 + (50 * act_row), 50, 50, 'black', id);
-                    this.cells[act_row][i].id_cell = i;
-                    this.cells[act_row][i].id_row = act_row;
-                    id++;
-                }
-
-                m++;
-                this.valid = false;
-            }
-
-            // If you dont want to use <body onLoad='init()'>
-            // You could uncomment this init() reference and place the script reference inside the body tag
-            var s = new CanvasState(document.getElementById('canvas1'));
-            var canvas_width = document.getElementById('canvas1').width;
-            var m, n;
-            var id = 0;
-            init();
-            var id_row;
-            var id_cell;
-			
-            function init() {
-                var a = 50; // cell width
-                var b = 50; // cell hight
-                var left_margin = 20;
-                var top_margin = 10;
-                var canvas_height = document.getElementById('canvas1').height;
-                var n = Math.floor((canvas_width - left_margin) / a); // cells count in row
-                var m = Math.floor((canvas_height - top_margin) / b); //rows count
-				 
-                var id_cell = 0;
-                var id_row = 0;
-                for ( var j = 1 + top_margin; j <= m * b; j = j + b) {
-                    for ( var i = 1 + left_margin; i <= n * a; i = i + a) {
-                        s.addShape(new Shape(i, j, a, b, 'white', id), id_cell, id_row);
-                        id_cell++;
-                        id++;
-                    }
-                    id_cell = 0;
-                    id_row++;
-                }
-                document.getElementById('item_type').value = "open_contact" 
-            }
-            function add_item() {
-                var item_type = document.getElementById('item_type').value;
-                var item_name = document.getElementById('item_name').value;
-                var item_set_type = '';
-                var item_target = '';
-                var item_delay = '';
-                var item_countTo = '';
-				if(item_type=='coil'){
-					var item_set_type = document.getElementById('set_type').value;
-				}else if(item_type=='timer'){
-					var item_delay = document.getElementById('item_delay').value;
-				}else if(item_type=='register'){
-
-				}else if(item_type=='counter'){
-					var item_target = document.getElementById('item_target').value;
-					var item_countTo = document.getElementById('item_countTo').value;
-				}
-                s.addItem(id_cell, id_row, item_type, item_name, item_set_type,
-                			item_target, item_delay, item_countTo);
-            }
-			function addbranch(type){
-				var item_type = 'branch/'+type;
-				s.addItem(id_cell, id_row, item_type, 'None', 'None', 'None', 'None', 'None');
-			}			
-			function clear_cell(){
-				s.addItem(id_cell, id_row, '', 'None', 'None', 'None', 'None', 'None');
-			}
-			function select(elem){
-				if(elem == 'open_contact' || elem == 'close_contact'){
-					document.getElementById('div_type').style.display = 'none';
-					document.getElementById('div_delay').style.display = 'none';
-					document.getElementById('div_countTo').style.display = 'none';
-					document.getElementById('div_target').style.display = 'none';
-				}else if(elem == 'coil'){
-					document.getElementById('div_type').style.display = 'block';
-					document.getElementById('div_delay').style.display = 'none';
-					document.getElementById('div_countTo').style.display = 'none';
-					document.getElementById('div_target').style.display = 'none';				
-				}else if(elem == 'timer'){	
-					document.getElementById('div_type').style.display = 'none';
-					document.getElementById('div_delay').style.display = 'block';
-					document.getElementById('div_countTo').style.display = 'none';	
-				}else if(elem == 'register'){
-					document.getElementById('div_type').style.display = 'none';
-					document.getElementById('div_delay').style.display = 'none';
-					document.getElementById('div_countTo').style.display = 'none';
-					document.getElementById('div_target').style.display = 'none';
-				}else if(elem == 'counter'){
-					document.getElementById('div_type').style.display = 'none';
-					document.getElementById('div_delay').style.display = 'none';
-					document.getElementById('div_countTo').style.display = 'block';
-					document.getElementById('div_target').style.display = 'block';
-				}
-			}			
-            function add_line() {
-                document.getElementById('canvas1').height += 50;
-                s.addLine(id_row);
-                s.height += 50;
-            }
-            function clear_all() {
-                for(var i=0; i<s.cells.length; i++){
-								for(var j=0;j<s.cells[0].length;j++){	
-									s.cells[i][j].item_type = 'None';
-									s.cells[i][j].item_name = 'None';
-									s.cells[i][j].item_value = 'None';
-								}
-							}
-				s.valid = false;
-            }
-            function send_json(){
-            	var msg = document.getElementById("msg");
-            	var ccode = document.getElementById("CCode");
-            	var code = document.getElementById("Code");
-			    var hr = new XMLHttpRequest();
-			    hr.open("POST", "{{url_for('get_json')}}", true);
-			    hr.setRequestHeader("Content-type", "application/json;");
-			    hr.onreadystatechange = function() {
-			   		if(hr.readyState == 4 && hr.status == 200) {
-			   			a = hr.responseText;
-			   			m = a.indexOf("[msg]")
-			   			if (m != -1){
-				   			c = a.indexOf("[ccode]")
-				   			msg.innerHTML = a.substring(m+5, c);
-				   			ccode.innerHTML = a.substring(c+7);
-				   			ccode.style.display = 'block';
-				   			code.style.display = 'block';
-				   			code.scrollIntoView();
-				   		}else{
-				   			msg.innerHTML = a
-				   		}
-			   		}
-			   	}	
-			   
-			    var data = {};
-			   	for(var i=0; i<s.cells.length; i++){
-			   		var row_tmp = {};
-					for(var j=0;j<s.cells[0].length;j++){
-						row_tmp['cell_'+j] = {'id':s.cells[i][j].item_id,
-											  'id_row':s.cells[i][j].id_row,
-											  'id_cell':s.cells[i][j].id_cell,
-											  'item_type':s.cells[i][j].item_type, 
-											  'item_name':s.cells[i][j].item_name, 
-											  'item_set_type':s.cells[i][j].item_set_type, 
-											  'item_target':s.cells[i][j].item_target, 
-											  'item_delay':s.cells[i][j].item_delay, 
-											  'item_countTo':s.cells[i][j].item_countTo};
+				var img_view = new Image();
+				a = [ "timer", "register", "counter" ]
+				for (i in a) {
+					if (this.item_type == a[i] + ".jpeg") {
+						img_view.src = '/static/instruction.jpeg';
 					}
-					data['row_'+i] = row_tmp;
-				} 
-				hr.send(JSON.stringify(data));				
+				}
+				if (img_view.src == '') {
+					img_view.src = '/static/' + this.item_type;
+				}
+				ctx.drawImage(img_view, this.x, this.y);
+
+				ctx.fillstyle = 'black';
+				//ctx.font = 'italic bold 30px sans-serif';
+				ctx.textBaseline = 'top';
+				if (this.item_name != 'None') {
+					ctx.fillText(this.item_name, this.x, this.y);
+				}
 			}
-			function load_example(a){
-				var results = document.getElementById("msg");
-			    var hr = new XMLHttpRequest();
-			    if(a==1){
-			    	hr.open("GET", "{{url_for('load_example', num=1)}}", true);
-			    }else{
-			    	hr.open("GET", "{{url_for('load_example', num=2)}}", true);
-			    }
-			    hr.setRequestHeader("Content-type", "application/json");
-			    hr.onreadystatechange = function() {
-			   		if(hr.readyState == 4 && hr.status == 200) {
-				   		var data = JSON.parse(hr.responseText);
-						results.innerHTML = "";
-						
-						
-						var max = 0
-						for(var row in data){
-						
-							if(row.length<6){
-								var rnum = row.charAt(row.length-1);
-							}else{
-								var rnum = row.charAt(row.length-2)+''+row.charAt(row.length-1);
-							}
-							rnum = parseInt(rnum)
-							if(rnum>max) max = rnum;
-						}
-						rnum = max
-						var canvas_height = document.getElementById('canvas1').height;
-       					var m = Math.floor((canvas_height - 10) / 50);
-						if(rnum > m-1){
-							for(var i=0; i<= rnum-m;i++){
-								add_line();
-							}
-						}else if(m-1>rnum){
-							for(var i=rnum; i<s.cells.length; i++){
-								for(var j=0;j<s.cells[0].length;j++){	
-									s.cells[i][j].item_type = 'None';
-									s.cells[i][j].item_name = 'None';
-									s.cells[i][j].item_set_type = 'None';
-									s.cells[i][j].item_target = 'None';
-									s.cells[i][j].item_delay = 'None';
-									s.cells[i][j].item_countTo = 'None';
-								}
-							}
-						}
-						//document.getElementById("msg2").innerHTML += s.cells[i][j].item_type+" "+s.cells[i][j].item_name+"<br>";
-						
-						for(var row in data){
-							if(row.length<6){
-								var rnum = row.charAt(row.length-1);
-							}else{
-								var rnum = row.charAt(row.length-2)+''+row.charAt(row.length-1);
-							}
-							for(var cell in data[row]){
-							
-								if(cell.length<7){
-									var cnum = cell.charAt(cell.length-1);
-								}else{
-									var cnum = cell.charAt(cell.length-2)+''+cell.charAt(cell.length-1);
-								}
-								var pos = data[row][cell].item_type.indexOf(".");
-								var item_type = data[row][cell].item_type.substr(0,pos);
-								var item_name = data[row][cell].item_name;
-								var item_set_type = data[row][cell].item_set_type;
-								var item_target = data[row][cell].item_target;
-								var item_delay = data[row][cell].item_delay;
-								var item_countTo = data[row][cell].item_countTo;
-								
-								s.addItem(cnum, rnum, item_type, item_name, item_set_type,
-										item_target, item_delay, item_countTo);
-							}
-						}
-						s.valid = false;
-			   		}
-			    }
-			    hr.send(null);
-			    results.innerHTML = "requesting...";
+			ctx.strokeStyle = 'lightred'; // red
+			ctx.lineWidth = 0.1;
+			ctx.strokeRect(this.x, this.y, this.w, this.h);
+			ctx.closePath();
+		}
+
+		// Determine if a point is inside the shape's bounds
+		Shape.prototype.contains = function(mx, my) {
+			// All we have to do is make sure the Mouse X,Y fall in the area between
+			// the shape's X and (X + Height) and its Y and (Y + Height)
+			return (this.x <= mx) && (this.x + this.w >= mx) && (this.y <= my)
+					&& (this.y + this.h >= my);
+		}
+
+		function CanvasState(canvas) {
+			// **** First some setup! ****
+
+			this.canvas = canvas;
+			this.width = canvas.width;
+			this.height = canvas.height;
+			this.ctx = canvas.getContext('2d');
+			// This complicates things a little but but fixes mouse co-ordinate problems
+			// when there's a border or padding. See getMouse for more detail
+			var stylePaddingLeft, stylePaddingTop, styleBorderLeft, styleBorderTop;
+			if (document.defaultView && document.defaultView.getComputedStyle) {
+				this.stylePaddingLeft = parseInt(document.defaultView
+						.getComputedStyle(canvas, null)['paddingLeft'], 10) || 0;
+				this.stylePaddingTop = parseInt(document.defaultView
+						.getComputedStyle(canvas, null)['paddingTop'], 10) || 0;
+				this.styleBorderLeft = parseInt(document.defaultView
+						.getComputedStyle(canvas, null)['borderLeftWidth'], 10) || 0;
+				this.styleBorderTop = parseInt(document.defaultView
+						.getComputedStyle(canvas, null)['borderTopWidth'], 10) || 0;
 			}
-        </script>
-    </body>
+			// Some pages have fixed-position bars (like the stumbleupon bar) at the top or left of the page
+			// They will mess up mouse coordinates and this fixes that
+			var html = document.body.parentNode;
+			this.htmlTop = html.offsetTop;
+			this.htmlLeft = html.offsetLeft;
+
+			// **** Keep track of state! ****
+			this.valid = false; // when set to false, the canvas will redraw everything
+
+			var a = 50; // cell width
+			var b = 50; // cell hight
+			var left_margin = 20;
+			var top_margin = 10;
+			var canvas_width = document.getElementById('canvas1').width;
+			var canvas_height = document.getElementById('canvas1').height;
+			var n = Math.floor((canvas_width - left_margin) / a); // cells count in row
+			var m = Math.floor((canvas_height - top_margin) / b); //rows count
+
+			this.cells = new Array(m);
+			for ( var i = 0; i < m; i++) {
+				for ( var j = 0; j < n; j++) {
+					this.cells[i] = new Array(n);
+				}
+			}
+
+			this.dragging = false; // Keep track of when we are dragging
+			// the current selected object. In the future we could turn this into an array for multiple selection
+			this.selection = null;
+			this.dragoffx = 0; // See mousedown and mousemove events for explanation
+			this.dragoffy = 0;
+
+			// **** Then events! ****
+
+			// This is an example of a closure!
+			// Right here "this" means the CanvasState. But we are making events on the Canvas itself,
+			// and when the events are fired on the canvas the variable "this" is going to mean the canvas!
+			// Since we still want to use this particular CanvasState in the events we have to save a reference to it.
+			// This is our reference!
+			var myState = this;
+
+			//fixes a problem where double clicking causes text to get selected on the canvas
+			canvas.addEventListener('selectstart', function(e) {
+				e.preventDefault();
+				return false;
+			}, false);
+			// Up, down, and move are for dragging
+			canvas.addEventListener('mousedown', function(e) {
+				var mouse = myState.getMouse(e);
+				var mx = mouse.x;
+				var my = mouse.y;
+
+				var cells = myState.cells;
+				var l = cells.length;
+				var k = cells[0].length;
+
+				for ( var i = l - 1; i >= 0; i--) {
+					for ( var j = k - 1; j >= 0; j--) {
+						if (cells[i][j].contains(mx, my)) {
+							var mySel = cells[i][j];
+							myState.dragoffx = mx - mySel.x;
+							myState.dragoffy = my - mySel.y;
+							myState.selection = mySel;
+							myState.valid = false;
+							id_cell = j;
+							id_row = i;
+							return;
+						}
+					}
+				}
+				// havent returned means we have failed to select anything.
+				// If there was an object selected, we deselect it
+				if (myState.selection) {
+					myState.selection = null;
+					myState.valid = false; // Need to clear the old selection border
+				}
+			}, true);
+			canvas.addEventListener('mousemove', function(e) {
+				if (myState.dragging) {
+					var mouse = myState.getMouse(e);
+					// We don't want to drag the object by its top-left corner, we want to drag it
+					// from where we clicked. Thats why we saved the offset and use it here
+					myState.selection.x = mouse.x - myState.dragoffx;
+					myState.selection.y = mouse.y - myState.dragoffy;
+					myState.valid = false; // Something's dragging so we must redraw
+				}
+			}, true);
+			canvas.addEventListener('mouseup', function(e) {
+				myState.dragging = false;
+			}, true);
+			// double click for making new shapes
+			//  canvas.addEventListener('dblclick', function(e) {
+			//    var mouse = myState.getMouse(e);
+			//    myState.addShape(new Shape(mouse.x - 10, mouse.y - 10, 20, 20, 'rgba(0,255,0,.6)'));
+			//  }, true);
+
+			// **** Options! ****
+
+			this.selectionColor = '#CC0000';
+			this.selectionWidth = 2;
+			this.interval = 20;
+			setInterval(function() {
+				myState.draw();
+			}, myState.interval);
+		}
+
+		CanvasState.prototype.addShape = function(shape, id_cell, id_row) {
+			this.cells[id_row][id_cell] = shape;
+			this.cells[id_row][id_cell].id_cell = id_cell;
+			this.cells[id_row][id_cell].id_row = id_row;
+			this.valid = false;
+		}
+
+		CanvasState.prototype.clear = function() {
+			this.ctx.clearRect(0, 0, this.width, this.height);
+		}
+
+		// While draw is called as often as the INTERVAL variable demands,
+		// It only ever does something if the canvas gets invalidated by our code
+		CanvasState.prototype.draw = function() {
+			// if our state is invalid, redraw and validate!
+			if (!this.valid) {
+
+				var ctx = this.ctx;
+				var cells = this.cells;
+				this.clear();
+
+				// ** Add stuff you want drawn in the background all the time here **
+
+				// draw all shapes
+
+				var l = cells.length;
+				var k = cells[0].length;
+				for ( var i = 0; i < l; i++) {
+					for ( var j = 0; j < k; j++) {
+						var shape = cells[i][j];
+						// We can skip the drawing of elements that have moved off the screen:
+						//if (shape.x > this.width || shape.y > this.height ||
+						// shape.x + shape.w < 0 || shape.y + shape.h < 0) continue;
+						cells[i][j].draw(ctx);
+					}
+				}
+				// draw selection
+				// right now this is just a stroke along the edge of the selected Shape
+				if (this.selection != null) {
+					ctx.beginPath();
+					ctx.strokeStyle = this.selectionColor;
+					ctx.lineWidth = this.selectionWidth;
+					var mySel = this.selection;
+					ctx.strokeRect(mySel.x, mySel.y, mySel.w, mySel.h);
+					ctx.closePath();
+					ctx.strokeStyle = 'black';
+
+					var msg = document.getElementById('msg');
+					if (mySel.item_type != '' && mySel.item_type != 'None'
+							&& mySel.item_name != 'None') {
+						var a = '<div style="color:blue">';
+						var type = mySel.item_type.split('.')[0];
+						a += 'Element selected<br>Type: ' + type + '<br>';
+						a += 'Id: ' + mySel.item_name + '<br>';
+						if (type == 'coil') {
+							a += 'Set/reset: ' + mySel.item_set_type;
+						}
+						if (type == 'timer') {
+							a += 'Delay: ' + mySel.item_delay;
+						}
+						if (type == 'counter') {
+							a += 'Target: ' + mySel.item_target;
+							a += '<br>Count to: ' + mySel.item_countTo;
+						}
+						a += '</div>';
+						msg.innerHTML = a;
+					} else {
+						msg.innerHTML = '';
+					}
+				}
+
+				// ** Add stuff you want drawn on top all the time here **
+
+				this.valid = true;
+			}
+		}
+
+		// Creates an object with x and y defined, set to the mouse position relative to the state's canvas
+		// If you wanna be super-correct this can be tricky, we have to worry about padding and borders
+		CanvasState.prototype.getMouse = function(e) {
+			var element = this.canvas, offsetX = 0, offsetY = 0, mx, my;
+
+			// Compute the total offset
+			if (element.offsetParent !== undefined) {
+				do {
+					offsetX += element.offsetLeft;
+					offsetY += element.offsetTop;
+				} while ((element = element.offsetParent));
+			}
+
+			// Add padding and border style widths to offset
+			// Also add the _$tag_ offsets in case there's a position:fixed bar
+			offsetX += this.stylePaddingLeft + this.styleBorderLeft
+					+ this.htmlLeft;
+			offsetY += this.stylePaddingTop + this.styleBorderTop
+					+ this.htmlTop;
+
+			mx = e.pageX - offsetX;
+			my = e.pageY - offsetY;
+
+			// We return a simple javascript object (a hash) with x and y defined
+			return {
+				x : mx,
+				y : my
+			};
+		}
+		CanvasState.prototype.addItem = function(id_cell, id_row, item_type,
+				item_name, item_set_type, item_target, item_delay, item_countTo) {
+			this.cells[id_row][id_cell].fill = 'black';
+			if (item_type != "") {
+				this.cells[id_row][id_cell].item_type = item_type + '.jpeg';
+			} else {
+				this.cells[id_row][id_cell].item_type = 'None';
+			}
+			if (item_delay != "") {
+				this.cells[id_row][id_cell].item_delay = item_delay;
+			} else {
+				this.cells[id_row][id_cell].item_delay = 'None';
+			}
+			if (item_countTo != "") {
+				this.cells[id_row][id_cell].item_countTo = item_countTo;
+			} else {
+				this.cells[id_row][id_cell].item_countTo = 'None';
+			}
+			if (item_target != "") {
+				this.cells[id_row][id_cell].item_target = item_target;
+			} else {
+				this.cells[id_row][id_cell].item_target = 'None';
+			}
+			if (item_set_type != "") {
+				this.cells[id_row][id_cell].item_set_type = item_set_type;
+			} else {
+				this.cells[id_row][id_cell].item_set_type = 'None';
+			}
+
+			this.cells[id_row][id_cell].item_name = item_name;
+			this.valid = false;
+		}
+		CanvasState.prototype.addLine = function(id_row) {
+
+			act_row = this.cells.length;
+			emp = new Array(11);
+			this.cells.push(emp);
+
+			for ( var i = 0; i < this.cells[0].length; i++) {
+				this.cells[act_row][i] = new Shape(21 + (50 * i),
+						11 + (50 * act_row), 50, 50, 'black', id);
+				this.cells[act_row][i].id_cell = i;
+				this.cells[act_row][i].id_row = act_row;
+				id++;
+			}
+
+			m++;
+			this.valid = false;
+		}
+
+		// If you dont want to use <body onLoad='init()'>
+		// You could uncomment this init() reference and place the script reference inside the body tag
+		var s = new CanvasState(document.getElementById('canvas1'));
+		var canvas_width = document.getElementById('canvas1').width;
+		var m, n;
+		var id = 0;
+		init();
+		var id_row;
+		var id_cell;
+
+		function init() {
+			var a = 50; // cell width
+			var b = 50; // cell hight
+			var left_margin = 20;
+			var top_margin = 10;
+			var canvas_height = document.getElementById('canvas1').height;
+			var n = Math.floor((canvas_width - left_margin) / a); // cells count in row
+			var m = Math.floor((canvas_height - top_margin) / b); //rows count
+
+			var id_cell = 0;
+			var id_row = 0;
+			for ( var j = 1 + top_margin; j <= m * b; j = j + b) {
+				for ( var i = 1 + left_margin; i <= n * a; i = i + a) {
+					s.addShape(new Shape(i, j, a, b, 'white', id), id_cell,
+							id_row);
+					id_cell++;
+					id++;
+				}
+				id_cell = 0;
+				id_row++;
+			}
+			document.getElementById('item_type').value = "open_contact"
+		}
+		function add_item() {
+			var item_type = document.getElementById('item_type').value;
+			var item_name = document.getElementById('item_name').value;
+			var item_set_type = '';
+			var item_target = '';
+			var item_delay = '';
+			var item_countTo = '';
+			if (item_type == 'coil') {
+				var item_set_type = document.getElementById('set_type').value;
+			} else if (item_type == 'timer') {
+				var item_delay = document.getElementById('item_delay').value;
+			} else if (item_type == 'register') {
+
+			} else if (item_type == 'counter') {
+				var item_target = document.getElementById('item_target').value;
+				var item_countTo = document.getElementById('item_countTo').value;
+			}
+			s.addItem(id_cell, id_row, item_type, item_name, item_set_type,
+					item_target, item_delay, item_countTo);
+		}
+		function addbranch(type) {
+			var item_type = 'branch/' + type;
+			s.addItem(id_cell, id_row, item_type, 'None', 'None', 'None',
+					'None', 'None');
+		}
+		function clear_cell() {
+			s.addItem(id_cell, id_row, '', 'None', 'None', 'None', 'None',
+					'None');
+		}
+		function select(elem) {
+			if (elem == 'open_contact' || elem == 'close_contact') {
+				document.getElementById('div_type').style.display = 'none';
+				document.getElementById('div_delay').style.display = 'none';
+				document.getElementById('div_countTo').style.display = 'none';
+				document.getElementById('div_target').style.display = 'none';
+			} else if (elem == 'coil') {
+				document.getElementById('div_type').style.display = 'block';
+				document.getElementById('div_delay').style.display = 'none';
+				document.getElementById('div_countTo').style.display = 'none';
+				document.getElementById('div_target').style.display = 'none';
+			} else if (elem == 'timer') {
+				document.getElementById('div_type').style.display = 'none';
+				document.getElementById('div_delay').style.display = 'block';
+				document.getElementById('div_countTo').style.display = 'none';
+			} else if (elem == 'register') {
+				document.getElementById('div_type').style.display = 'none';
+				document.getElementById('div_delay').style.display = 'none';
+				document.getElementById('div_countTo').style.display = 'none';
+				document.getElementById('div_target').style.display = 'none';
+			} else if (elem == 'counter') {
+				document.getElementById('div_type').style.display = 'none';
+				document.getElementById('div_delay').style.display = 'none';
+				document.getElementById('div_countTo').style.display = 'block';
+				document.getElementById('div_target').style.display = 'block';
+			}
+		}
+		function add_line() {
+			document.getElementById('canvas1').height += 50;
+			s.addLine(id_row);
+			s.height += 50;
+		}
+		function clear_all() {
+			for ( var i = 0; i < s.cells.length; i++) {
+				for ( var j = 0; j < s.cells[0].length; j++) {
+					s.cells[i][j].item_type = 'None';
+					s.cells[i][j].item_name = 'None';
+					s.cells[i][j].item_value = 'None';
+				}
+			}
+			s.valid = false;
+		}
+		function send_json() {
+			var msg = document.getElementById("msg");
+			var ccode = document.getElementById("CCode");
+			var code = document.getElementById("Code");
+			var hr = new XMLHttpRequest();
+			hr.open("POST", "{{url_for('get_json')}}", true);
+			hr.setRequestHeader("Content-type", "application/json;");
+			hr.onreadystatechange = function() {
+				if (hr.readyState == 4 && hr.status == 200) {
+					a = hr.responseText;
+					m = a.indexOf("[msg]")
+					if (m != -1) {
+						c = a.indexOf("[ccode]")
+						msg.innerHTML = a.substring(m + 5, c);
+						ccode.innerHTML = a.substring(c + 7);
+						ccode.style.display = 'block';
+						code.style.display = 'block';
+						code.scrollIntoView();
+					} else {
+						msg.innerHTML = a
+					}
+				}
+			}
+
+			var data = {};
+			for ( var i = 0; i < s.cells.length; i++) {
+				var row_tmp = {};
+				for ( var j = 0; j < s.cells[0].length; j++) {
+					row_tmp['cell_' + j] = {
+						'id' : s.cells[i][j].item_id,
+						'id_row' : s.cells[i][j].id_row,
+						'id_cell' : s.cells[i][j].id_cell,
+						'item_type' : s.cells[i][j].item_type,
+						'item_name' : s.cells[i][j].item_name,
+						'item_set_type' : s.cells[i][j].item_set_type,
+						'item_target' : s.cells[i][j].item_target,
+						'item_delay' : s.cells[i][j].item_delay,
+						'item_countTo' : s.cells[i][j].item_countTo
+					};
+				}
+				data['row_' + i] = row_tmp;
+			}
+			hr.send(JSON.stringify(data));
+		}
+		function load_example(a) {
+			var results = document.getElementById("msg");
+			var hr = new XMLHttpRequest();
+			if (a == 1) {
+				hr.open("GET", "{{url_for('load_example', num=1)}}", true);
+			} else {
+				hr.open("GET", "{{url_for('load_example', num=2)}}", true);
+			}
+			hr.setRequestHeader("Content-type", "application/json");
+			hr.onreadystatechange = function() {
+				if (hr.readyState == 4 && hr.status == 200) {
+					var data = JSON.parse(hr.responseText);
+					results.innerHTML = "";
+
+					var max = 0
+					for ( var row in data) {
+
+						if (row.length < 6) {
+							var rnum = row.charAt(row.length - 1);
+						} else {
+							var rnum = row.charAt(row.length - 2) + ''
+									+ row.charAt(row.length - 1);
+						}
+						rnum = parseInt(rnum)
+						if (rnum > max)
+							max = rnum;
+					}
+					rnum = max
+					var canvas_height = document.getElementById('canvas1').height;
+					var m = Math.floor((canvas_height - 10) / 50);
+					if (rnum > m - 1) {
+						for ( var i = 0; i <= rnum - m; i++) {
+							add_line();
+						}
+					} else if (m - 1 > rnum) {
+						for ( var i = rnum; i < s.cells.length; i++) {
+							for ( var j = 0; j < s.cells[0].length; j++) {
+								s.cells[i][j].item_type = 'None';
+								s.cells[i][j].item_name = 'None';
+								s.cells[i][j].item_set_type = 'None';
+								s.cells[i][j].item_target = 'None';
+								s.cells[i][j].item_delay = 'None';
+								s.cells[i][j].item_countTo = 'None';
+							}
+						}
+					}
+					//document.getElementById("msg2").innerHTML += s.cells[i][j].item_type+" "+s.cells[i][j].item_name+"<br>";
+
+					for ( var row in data) {
+						if (row.length < 6) {
+							var rnum = row.charAt(row.length - 1);
+						} else {
+							var rnum = row.charAt(row.length - 2) + ''
+									+ row.charAt(row.length - 1);
+						}
+						for ( var cell in data[row]) {
+
+							if (cell.length < 7) {
+								var cnum = cell.charAt(cell.length - 1);
+							} else {
+								var cnum = cell.charAt(cell.length - 2) + ''
+										+ cell.charAt(cell.length - 1);
+							}
+							var pos = data[row][cell].item_type.indexOf(".");
+							var item_type = data[row][cell].item_type.substr(0,
+									pos);
+							var item_name = data[row][cell].item_name;
+							var item_set_type = data[row][cell].item_set_type;
+							var item_target = data[row][cell].item_target;
+							var item_delay = data[row][cell].item_delay;
+							var item_countTo = data[row][cell].item_countTo;
+
+							s.addItem(cnum, rnum, item_type, item_name,
+									item_set_type, item_target, item_delay,
+									item_countTo);
+						}
+					}
+					s.valid = false;
+				}
+			}
+			hr.send(null);
+			results.innerHTML = "requesting...";
+		}
+	</script>
+</body>
 </html>
