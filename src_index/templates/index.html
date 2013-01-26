@@ -637,14 +637,9 @@
 					if (m != -1) {
 						c = a.indexOf("[ccode]")
 						msg.innerHTML = a.substring(m + 5, c);
-						//ccode.innerHTML = a.substring(c + 7);
-						//ccode.style.display = 'block';
-						//code.style.display = 'block';
-						//code.scrollIntoView();
-						var newLocation = window.open("{{url_for('load_code')}}", "C code", "location=1,status=1,menubar=1,");
+						var newLocation = window.open("{{url_for('load_code')}}", "C code");
 						newLocation.onload = function(){
 							newLocation.document.getElementById("CCode").innerHTML = a.substring(c + 7);
-							newLocation.sh_highlightDocument();
 						}
 					} else {
 						msg.innerHTML = a
@@ -718,8 +713,7 @@
 							}
 						}
 					}
-					//document.getElementById("msg2").innerHTML += s.cells[i][j].item_type+" "+s.cells[i][j].item_name+"<br>";
-
+					
 					for ( var row in data) {
 						if (row.length < 6) {
 							var rnum = row.charAt(row.length - 1);

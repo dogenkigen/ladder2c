@@ -1,14 +1,19 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>C code</title>
-	<script type="text/javascript" src="{{url_for('static', filename='sh_main.js')}}"></script>
-	<script type="text/javascript" src="{{url_for('static', filename='sh_c.js')}}"></script>
-	<link type="text/css" rel="stylesheet" href="{{url_for('static', filename='sh_style.css')}}">
-	<!-- http://shjs.sourceforge.net/ -->
+<title>C code</title>	
+	<script type="text/javascript" src="{{url_for('static', filename='shCore.js')}}"></script>
+	<script type="text/javascript" src="{{url_for('static', filename='shBrushCpp.js')}}"></script>
+	<link type="text/css" rel="stylesheet" href="{{url_for('static', filename='shCore.css')}}">
+	<link type="text/css" rel="stylesheet" href="{{url_for('static', filename='shThemeDefault.css')}}">
 </head>
 <body id="body">
-	<pre id="CCode" class="sh_c">
+
+	<pre id="CCode" class="brush: c;ruler: true;">	
 	</pre>
+	
+	<script type="text/javascript">
+		SyntaxHighlighter.all()
+	</script>
 </body>
 </html>
