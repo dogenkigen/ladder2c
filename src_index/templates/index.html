@@ -637,10 +637,15 @@
 					if (m != -1) {
 						c = a.indexOf("[ccode]")
 						msg.innerHTML = a.substring(m + 5, c);
-						ccode.innerHTML = a.substring(c + 7);
-						ccode.style.display = 'block';
-						code.style.display = 'block';
-						code.scrollIntoView();
+						//ccode.innerHTML = a.substring(c + 7);
+						//ccode.style.display = 'block';
+						//code.style.display = 'block';
+						//code.scrollIntoView();
+						var newLocation = window.open("{{url_for('load_code')}}", "C code", "location=1,status=1,menubar=1,");
+						newLocation.onload = function(){
+							newLocation.document.getElementById("CCode").innerHTML = a.substring(c + 7);
+							newLocation.sh_highlightDocument();
+						}
 					} else {
 						msg.innerHTML = a
 					}

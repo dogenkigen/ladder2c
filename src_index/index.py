@@ -124,7 +124,9 @@ def get_json():
         return msg
 		
 	
-	
+@app.route("/load_code")
+def load_code():
+	return render_template('/code.html')
 
 @app.route("/load_example/<num>")
 def load_example(num=1):
