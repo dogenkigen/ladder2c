@@ -5,10 +5,11 @@ from src_index import app
 class CCodeGenerator:
     """Generates all C code."""
 
-    def __init__(self, config, delay=False):#, counters):
+    def __init__(self, config, delay=False, edge=False):#, counters):
         self.config = config
         self.code = ""
         self.delay = delay
+        self.edge = edge
         #self.counters = counters
         self.__begin()
     
@@ -40,6 +41,9 @@ class CCodeGenerator:
         #Add delay stuff
         if self.delay:
             self.code = self.code + self.config.get("base", "delay")
+        
+        if self.edge:
+            self.code = self.code + self.config.get("base", "edge")
             
         #Start main function
         self.code = self.code + "int main(void){"
@@ -63,10 +67,12 @@ class CCodeGenerator:
         self.code = self.code + "\nwhile(1){"
         # TODO add gpio stuff
     
-    def getTimer(self, delayCount, delayUnit="ms"):
-        if delayUnit == "us":
-            return "delay_us(" + str(delayCount) + ")"
-        return "delay_ms(" + str(delayCount) + ")"
+    def getTimer(self, delayCount, timer, delayUnit="ms"):
+        return 'setTimer('+timer+', '+delayCount+');'
+#        if delayUnit == "us":
+#            return "delay_us(" + str(delayCount) + ")"
+#        return "delay_ms(" + str(delayCount) + ")"
+    
     
     def appendCondtion(self, condition, output):
         """Add next if condition."""

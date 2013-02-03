@@ -52,6 +52,8 @@
 						<option value='timer'>-[ ]- timer</option>
 						<option value='register'>-[ ]- register</option>
 						<option value='counter'>-[ ]- counter</option>
+						<option value='rising'>-| |- rising</option>
+						<option value='falling'>-| |- falling</option>
 					</select>
 					<div id="div_id">
 						<label>Id: </label>
@@ -161,6 +163,10 @@
 							width="50%"> <img
 							src="{{url_for('static',filename='coil.jpeg')}}" width="50%">
 						<img src="{{url_for('static',filename='instruction.jpeg')}}"
+							width="50%">
+						<img src="{{url_for('static',filename='rising.jpeg')}}"
+							width="50%">
+						<img src="{{url_for('static',filename='falling.jpeg')}}"
 							width="50%">
 					</div>
 				</fieldset>
@@ -582,7 +588,7 @@
 					'None');
 		}
 		function select(elem) {
-			if (elem == 'open_contact' || elem == 'close_contact') {
+			if (elem == 'open_contact' || elem == 'close_contact' || elem == 'rising' || elem == 'falling') {
 				document.getElementById('div_type').style.display = 'none';
 				document.getElementById('div_delay').style.display = 'none';
 				document.getElementById('div_countTo').style.display = 'none';

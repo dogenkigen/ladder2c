@@ -9,7 +9,7 @@ class XmlGenerator():
         self.data_objs=[]    # diagram in list
         self.dict_elems={}   # elements(contact, coil, inst) in dict
         self.list_all_elem=['open_contact', 'close_contact', 'coil', 'timer', \
-                            'counter', 'reg']
+                            'counter', 'reg', 'rising', 'falling']
         self.list_outputs = ['coil', 'timer', 'counter', 'register']
         self.node_list={}
         self.paths = {}
@@ -24,11 +24,11 @@ class XmlGenerator():
         self._add_to_document('<elements>')
         for obj in self.dict_elems:
             tmp = self.dict_elems[obj]
-            if(tmp['item_type'].split('.')[0]=='open_contact' and not tmp['item_name'][0] in ['T']):
+            if(tmp['item_type'].split('.')[0]=='open_contact'):# and not tmp['item_name'][0] in ['T']
                 xml_str = '<contact id="%s" normal="true" />'%tmp['item_name']
                 if(self.out.find(xml_str)==-1):
                     self._add_to_document(xml_str)
-            elif(tmp['item_type'].split('.')[0]=='close_contact' and not tmp['item_name'][0] in ['T']):
+            elif(tmp['item_type'].split('.')[0]=='close_contact'):
                 xml_str = '<contact id="%s" normal="false" />'%tmp['item_name']
                 if(self.out.find(xml_str)==-1):
                     self._add_to_document(xml_str)
@@ -46,6 +46,14 @@ class XmlGenerator():
                     self._add_to_document(xml_str)
             elif(tmp['item_type'].split('.')[0]=='register'):
                 xml_str = '<reg id="%s" />'%(tmp['item_name'])
+                if(self.out.find(xml_str)==-1):
+                    self._add_to_document(xml_str)
+            elif(tmp['item_type'].split('.')[0]=='rising'):
+                xml_str = '<contact id="%s" normal="true" edge="rising" />'%(tmp['item_name']+'e')
+                if(self.out.find(xml_str)==-1):
+                    self._add_to_document(xml_str)
+            elif(tmp['item_type'].split('.')[0]=='falling'):
+                xml_str = '<contact id="%s" normal="true" edge="falling" />'%(tmp['item_name']+'e')
                 if(self.out.find(xml_str)==-1):
                     self._add_to_document(xml_str)
                 
@@ -325,7 +333,7 @@ class XmlGenerator():
         elif((cell.item_type == 'hor-top' and prev_cell == self.get_cell_obj(cell.id_cell, cell.id_row-1)) or \
               (cell.item_type == 'hor') or (cell.item_type == 'left-down') or (cell.item_type == 'left-top') or \
               (cell.item_type == 'hor-down' and prev_cell == self.get_cell_obj(cell.id_cell, cell.id_row+1)) or \
-              (cell.item_type in ['open_contact', 'close_contact'] or cell.item_type in self.list_outputs)): 
+              (cell.item_type in ['open_contact', 'close_contact', 'rising', 'falling'] or cell.item_type in self.list_outputs)): 
             # left 
             l = self.get_cell_obj(cell.id_cell-1, cell.id_row)
             if(cell.id_cell == 0):
@@ -412,7 +420,10 @@ class Path():
     def add_to_path(self, cell):
         if(cell.item_type not in ['coil', 'set', 'reset', 'timer', 'counter', 'register']):
             self.elem_num += 1
-            tmp = '<elem id="%s" />'%cell.item_name
+            if cell.item_type in ['rising', 'falling']:
+                tmp = '<elem id="%s" />'%(cell.item_name+'e')
+            else:
+                tmp = '<elem id="%s" />'%cell.item_name
             if(cell.item_type=='close_contact'):
                 tmp = '<not>\n%s\n</not>'%tmp
             if(self.elem_num == 1):

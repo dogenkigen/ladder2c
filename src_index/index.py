@@ -20,19 +20,27 @@ def getOutput(id, elements):
 			return config.get("elements_output", id + "_RESET")
 	else:
 		return config.get("elements_output", id)
+def getEdge(id):
+	id = id[id.find('(')+1:id.find(')')]
+	return 'checkEdge('+id+')'
 
 def parseXml(xml):
 	elements = xml.find("elements")
+	delay = False
+	edge = False
 	if elements.find(".//timer") is not None:
-		gen = CCodeGenerator.CCodeGenerator(config, True)
-	else:
-		gen = CCodeGenerator.CCodeGenerator(config, False)
+		delay = True
+	for item in elements:
+		if not item.attrib['id'].find('e') == -1:
+			edge = True
+	
+	gen = CCodeGenerator.CCodeGenerator(config, delay, edge)
 
 	for output in xml.find("diagram").findall("output"):
 	    if output.attrib["id"]. startswith("T"):
 	        id = output.attrib["id"]
 	        timer = elements.find(".//timer[@id='" + id + "']")
-	        gen.appendCondtion(recurse(output.find(".*"), elements), gen.getTimer(timer.attrib["delay"], timer.attrib["unit"]))  # TODO
+	        gen.appendCondtion(recurse(output.find(".*"), elements), gen.getTimer(timer.attrib["delay"], config.get("elements_output", id), timer.attrib["unit"]))  # TODO
 	    else:
 	        gen.appendCondtion(recurse(output.find(".*"), elements), getOutput(output.attrib["id"], elements))
 
@@ -44,7 +52,10 @@ def recurse(object, elements):
 		elemList = []
 		for oneElem in object:
 		    if oneElem.tag == "elem":
-		        elemList.append(config.get("elements_input", oneElem.attrib["id"]))
+		    	if (not oneElem.attrib["id"].find('e') == -1):
+		    		elemList.append(getEdge(config.get("elements_input", oneElem.attrib["id"][:-1])))
+		    	else:
+		    		elemList.append(config.get("elements_input", oneElem.attrib["id"]))
 		    else:
 				elemList.append(recurse(oneElem, elements))
 
