@@ -20,9 +20,11 @@ def getOutput(id, elements):
 			return config.get("elements_output", id + "_RESET")
 	else:
 		return config.get("elements_output", id)
-def getEdge(id):
+def getEdge(id, edge):
 	id = id[id.find('(')+1:id.find(')')]
-	return 'checkEdge('+id+')'
+	if edge == "rising":
+		return 'checkEdge(' + id + ', ' + id[-1] +', true)'
+	return 'checkEdge(' + id + ', ' + id[-1] +', false)' 
 
 def parseXml(xml):
 	elements = xml.find("elements")
@@ -53,7 +55,7 @@ def recurse(object, elements):
 		for oneElem in object:
 		    if oneElem.tag == "elem":
 		    	if (not oneElem.attrib["id"].find('e') == -1):
-		    		elemList.append(getEdge(config.get("elements_input", oneElem.attrib["id"][:-1])))
+		    		elemList.append(getEdge(config.get("elements_input", oneElem.attrib["id"][:-1]), elements.find(".//contact[@id='" + oneElem.attrib["id"] + "']").attrib["edge"]))
 		    	else:
 		    		elemList.append(config.get("elements_input", oneElem.attrib["id"]))
 		    else:
