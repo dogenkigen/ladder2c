@@ -27,16 +27,13 @@ class CCodeGenerator:
             self.code = self.code + define + "\n"
         
         #Add variables
-        self.code = self.code + "\n"
-        self.code = self.code + self.config.get("base", "variables")
+        self.code = self.code + "\n" + self.config.get("base", "variables")
         
         #Add functions
-        self.code = self.code + "\n"
-        self.code = self.code + self.config.get("base", "functions")
+        self.code = self.code + "\n" + self.config.get("base", "functions")
         
         #Add io
-        self.code = self.code + "\n"
-        self.code = self.code + self.config.get("base", "io")
+        self.code = self.code + "\n" + self.config.get("base", "io")
             
         #Add delay stuff
         if self.delay:
@@ -44,7 +41,7 @@ class CCodeGenerator:
             self.code = self.code + self.config.get("base", "timer")
         
         if self.edge:
-            self.code = self.code + self.config.get("base", "edge")
+            self.code = self.code + "\n" + self.config.get("base", "edge")
             
         #Start main function
         self.code = self.code + "\n int main(void){"
@@ -56,13 +53,7 @@ class CCodeGenerator:
         if self.delay:
             self.code = self.code + "delay_init();"
         
-        #Add counters TODO
-        """
-        for counter in self.counters:
-            self.code = self.code + "int counter_" + counter[0] + " = 0;"
-            self.code = self.code + "int count_" + counter[0] + "_to = " + counter[1] + ";"
-            self.code = self.code + "bool counter_" + counter[0] + "_target = " + counter[2] + ";"
-        """
+        # TODO Add counters
             
         self.code = self.code + "\n"
         self.code = self.code + "\nwhile(1){"
@@ -92,12 +83,11 @@ class CCodeGenerator:
     def appendCondtion(self, condition, output):
         """Add next if condition."""
         
-        if output.startswith("C"):
-            outputCode = "int *a = &counter_" + output + ";(*a) ++"
-        else:
-            outputCode = output
-        
-        self.code = self.code + "if(" + condition + ") {" + outputCode + "; }" 
+        if output.startswith("R"):
+            self.code = self.code + "if(" + condition + ") {" + output + " = true; }else{" + output + " = false;}"
+            return
+
+        self.code = self.code + "if(" + condition + ") {" + output + "; }" 
         
     def getCode(self):
         """Return generated code."""
