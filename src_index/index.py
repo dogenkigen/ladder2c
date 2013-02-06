@@ -12,21 +12,8 @@ config = ConfigParser()
 # just for now. should load from form
 config.readfp(app.open_resource("conf/stm32f103vct6.conf", 'r'))
 
-def getOutput(id, elements):
-	if id.startswith("Y"):
-		if elements.find(".//coil[@id='" + id + "']").attrib["type"] == "set":
-			return config.get("elements_output", id + "_SET")
-		else:
-			return config.get("elements_output", id + "_RESET")
-	else:
-		return config.get("elements_output", id)
-def getEdge(id, edge):
-	id = id[id.find('(')+1:id.find(')')]
-	if edge == "rising":
-		return 'checkEdge(' + id + ', ' + id[-1] +', true)'
-	return 'checkEdge(' + id + ', ' + id[-1] +', false)' 
-
 def parseXml(xml):
+	"""Parses XML"""
 	elements = xml.find("elements")
 	delay = False
 	edge = False
@@ -39,27 +26,23 @@ def parseXml(xml):
 	gen = CCodeGenerator.CCodeGenerator(config, delay, edge)
 
 	for output in xml.find("diagram").findall("output"):
-	    if output.attrib["id"]. startswith("T"):
-	        id = output.attrib["id"]
-	        timer = elements.find(".//timer[@id='" + id + "']")
-	        gen.appendCondtion(recurse(output.find(".*"), elements), gen.getTimer(timer.attrib["delay"], config.get("elements_output", id), timer.attrib["unit"]))  # TODO
-	    else:
-	        gen.appendCondtion(recurse(output.find(".*"), elements), getOutput(output.attrib["id"], elements))
+	    gen.appendCondtion(recurse(output.find(".*"), elements, gen), gen.getOutput(output.attrib["id"], elements))
 
 	return gen.getCode()
 
-def recurse(object, elements):
+def recurse(object, elements, gen):
 	"""Recursive method for parsing XML program"""
 	if len(object) > 1:
 		elemList = []
 		for oneElem in object:
 		    if oneElem.tag == "elem":
 		    	if (not oneElem.attrib["id"].find('e') == -1):
-		    		elemList.append(getEdge(config.get("elements_input", oneElem.attrib["id"][:-1]), elements.find(".//contact[@id='" + oneElem.attrib["id"] + "']").attrib["edge"]))
+		    		elemList.append(gen.getEdge(config.get("elements_input", oneElem.attrib["id"][:-1]),
+										 elements.find(".//contact[@id='" + oneElem.attrib["id"] + "']").attrib["edge"]))
 		    	else:
 		    		elemList.append(config.get("elements_input", oneElem.attrib["id"]))
 		    else:
-				elemList.append(recurse(oneElem, elements))
+				elemList.append(recurse(oneElem, elements, gen))
 
 		if object.tag == "and":
 		    return LogicCondition.LogicCondition.logicMultiple(elemList, "&&")
@@ -69,7 +52,7 @@ def recurse(object, elements):
 		if object.tag == "elem":
 		    return config.get("elements_input", object.attrib["id"])
 		if object.tag == "not":
-		    return LogicCondition.LogicCondition.logicOne(recurse(object.find(".*"), elements), "!")
+		    return LogicCondition.LogicCondition.logicOne(recurse(object.find(".*"), elements, gen), "!")
     
 	raise Exception("Program is invalid!")
 
