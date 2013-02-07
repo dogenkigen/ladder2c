@@ -1,9 +1,13 @@
 from src_index import app
 class XmlGenerator():
     '''
+    Generating XML file based on json data recived from ladder diagram
     '''
     
     def __init__(self):
+        '''
+        Definition of basic vars
+        '''
         self.out='<program>'
         self.data_diagram={} # diagram in json format
         self.data_objs=[]    # diagram in list
@@ -13,13 +17,11 @@ class XmlGenerator():
         self.list_outputs = ['coil', 'timer', 'counter', 'register']
         self.node_list={}
         self.paths = {}
-        # self.dict_elems:
-        # {'y0': {'item_name': 'y0', 'item_type': 'coil.jpeg', 'item_value': 'None'}, ... }
     
     def elements_init(self):
         '''
-        <elements>
-        </elements>
+        Initialization of defined elements. Adding each diagram element to <elements> 
+        section of xml file
         '''
         self._add_to_document('<elements>')
         for obj in self.dict_elems:
@@ -72,6 +74,9 @@ class XmlGenerator():
         return data_objs
     
     def start(self, json_data):
+        '''
+        Combine different methods of class.
+        '''
         self.data_diagram = json_data 
         data = self.data_diagram    
         self.data_objs = [0]*(len(data)*len(data['row_0'])) 
@@ -150,6 +155,9 @@ class XmlGenerator():
         return self.out
     
     def group(self, output_id):
+        '''
+        Changing graphic sth into xml sth
+        '''
         paths = self.paths[output_id]
         def same():
             ret = False
@@ -203,6 +211,9 @@ class XmlGenerator():
             
     
     def complete_path(self, curr_cell, prev_cell, curr_node, output_id=10, curr_path=None):
+        '''
+        Complete list of elems in each path
+        '''
         dirs = self.what_direction(curr_cell, prev_cell)
         if(curr_cell.item_type in self.list_all_elem):
             curr_path.add_to_path(curr_cell)
@@ -256,7 +267,9 @@ class XmlGenerator():
     
     
     def visit_mark(self, curr_cell, prev_cell, curr_node, output_id=10):
-        # add node marking, if branch is visited and blank: sth
+        '''
+        add node marking, if branch is visited and blank: sth
+        '''
         dirs = self.what_direction(curr_cell, prev_cell)
         
                 
@@ -288,7 +301,6 @@ class XmlGenerator():
         elif(curr_cell.visited == True and curr_cell.item_type == 'top-right' and curr_node != None):
             prev_cell.node = curr_cell.node
                             
-            
         if ['Start'] == dirs:
             curr_cell.node = Node()
             curr_cell.node.id = 'Start'
@@ -312,7 +324,8 @@ class XmlGenerator():
         
         
     def what_direction(self, cell, prev_cell):
-        ''' return next list of next cells
+        ''' 
+        Return directions of current cell. Lst of next cells.
         '''
         if((cell.item_type == 'hor-down' and prev_cell == self.get_cell_obj(cell.id_cell+1, cell.id_row)) or \
              (cell.item_type == 'ver-left' and prev_cell == self.get_cell_obj(cell.id_cell, cell.id_row-1))):
@@ -374,15 +387,18 @@ class XmlGenerator():
 
 class Cell():
     '''
-    attr = {
-    this.id_row;
-    this.id_cell;
-    this.item_id = id;
-    this.item_type = 'None';
-    this.item_name = 'None';
-    }
+    Representation of cell in ladder diagram
     '''
     def __init__(self, attr):
+        '''
+        attr = {
+        this.id_row;
+        this.id_cell;
+        this.item_id = id;
+        this.item_type = 'None';
+        this.item_name = 'None';
+        }
+        '''
         self.id = attr['id']
         self.item_type = attr['item_type']
         self.item_name = attr['item_name']
@@ -407,6 +423,9 @@ class Node():
         self.row_num = 1
 
 class Path():
+    '''
+    Group of elements in simple <and> tag
+    '''
     path_counter = 0
     def __init__(self, start_node):
         self.id = Path.path_counter    

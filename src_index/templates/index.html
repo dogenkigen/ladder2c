@@ -56,16 +56,15 @@
 						<option value='close_contact'>-|/|- close contact</option>
 						<option value='coil'>-( )- coil</option>
 						<option value='timer'>-[ ]- timer</option>
-						<option value='register'>-[ ]- register</option>
-						<option value='counter'>-[ ]- counter</option>
+						<option value='register'>-[ ]- flag</option>
 						<option value='rising'>-| |- rising</option>
 						<option value='falling'>-| |- falling</option>
 					</select>
 					<div id="div_id">
 						<label>Id: </label>
-						<!-- TODO change this label name and add validation to the field! -->
 						<input type='text' id='item_name'
 							placeholder="Enter element name here." />
+						<span class="help-block">Element name needs to start with one of: X, Y, T, M, and be followed by number.</span>
 					</div>
 					<div id="div_type" style="display: none;">
 						<label>set/reset: </label> <select id="set_type">
@@ -584,23 +583,61 @@
 		}
 		function add_item() {
 			var item_type = document.getElementById('item_type').value;
-			var item_name = document.getElementById('item_name').value;
+			var item_name = document.getElementById('item_name').value.toUpperCase();
+			var invalid_form = false;
+			var invalid_msg = false;
 			var item_set_type = '';
 			var item_target = '';
 			var item_delay = '';
 			var item_countTo = '';
 			if (item_type == 'coil') {
 				var item_set_type = document.getElementById('set_type').value;
+				var re = /\b(^[Y]{1})[0-9]{1,3}\b/i;
+				if(!item_name.match(re)){
+					invalid_form = true;
+				}
+				if(this.id_cell!=10){
+					invalid_msg="Invalid element position. Coil output needs to be last element to the right.";
+				}
 			} else if (item_type == 'timer') {
 				var item_delay = document.getElementById('item_delay').value;
+				var re = /\b(^[T]{1})[0-9]{1,3}\b/i;
+				if(!item_name.match(re)){
+					invalid_form = true;
+				}
+				if(this.id_cell!=10){
+					invalid_msg="Invalid element position. Timer output needs to be last element to the right.";
+				}
 			} else if (item_type == 'register') {
-
+				var re = /\b(^[M]{1})[0-9]{1,3}\b/i;
+				if(!item_name.match(re)){
+					invalid_form = true;
+				}
+				if(this.id_cell!=10){
+					invalid_msg="Invalid element position. Flag output needs to be last element to the right.";
+				}
 			} else if (item_type == 'counter') {
 				var item_target = document.getElementById('item_target').value;
 				var item_countTo = document.getElementById('item_countTo').value;
+			}else{
+				var re = /\b(^[XYTM]{1})[0-9]{1,3}\b/i;
+				if(!item_name.match(re)){
+					invalid_form = true;
+				}
+				if(this.id_cell==10){
+					invalid_msg="Invalid element position. Input element can\'t be last element to the right.";
+				}
 			}
-			s.addItem(id_cell, id_row, item_type, item_name, item_set_type,
-					item_target, item_delay, item_countTo);
+			if(!invalid_form){
+				if(!invalid_msg){
+					s.addItem(id_cell, id_row, item_type, item_name, item_set_type,
+						item_target, item_delay, item_countTo);
+				}else{
+					alert(invalid_msg);
+				}
+			}else{
+				alert("Invalid element id.");
+			}
 		}
 		function addbranch(type) {
 			var item_type = 'branch/' + type;

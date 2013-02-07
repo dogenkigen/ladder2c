@@ -83,7 +83,16 @@ def index():
 
 @app.route("/get_json", methods=['POST', 'GET'])
 def get_json():
+	'''
+	1. Reciving json data from html/javascript site.
+	2. Calling start method from XmlGenerator to make xml file from jason ladder data.
+	3. Validating xml with schema.xsd
+	4. Generating C code with parseXml based on xml file
+	5. Formatting C code indents with system procedur astyle
+	6. Sending code with control message to html file
+	'''
 	data = request.json
+	print data
 	ccode = ''
 	try:
 		try:
@@ -127,10 +136,16 @@ def get_json():
 	
 @app.route("/load_code")
 def load_code():
+	'''
+	Opening subsite with generated C code
+	'''
 	return render_template('/code.html')
 
 @app.route("/load_example/<num>")
 def load_example(num=1):
+	'''
+	Opening file with example and sending data in json format
+	'''
 	data = app.open_resource('static/mylist%s.json' % num, 'r')
 	data = eval(data.read())
 	return jsonify(data)
