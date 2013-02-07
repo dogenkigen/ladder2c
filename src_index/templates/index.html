@@ -4,13 +4,19 @@
 <title>Ladder2c</title>
 <!-- Bootstrap -->
 <link
-	href="http://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.1.1/css/bootstrap.min.css"
+	href="http://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.1.1/css/bootstrap.css"
 	rel="stylesheet" media="screen">
 </head>
 <body style="background-color: white;">
 	<script src="http://code.jquery.com/jquery-latest.js"></script>
 	<script
-		src="http://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.1.1/bootstrap.min.js"></script>
+		src="http://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.1.1/bootstrap.js">
+	</script>
+	<script type="text/javascript">
+    	$(function () {
+        	$("[rel='tooltip']").tooltip();
+    	});
+	</script>
 
 	<div class="container">
 		<div class="row">
@@ -85,74 +91,92 @@
 					<button onclick='add_item();' class="btn">Add</button>
 					<hr>
 					<label>Branch:</label>
+					
+					<div class="alert alert-info">
+						<button type="button" class="close" data-dismiss="alert">&times;</button>
+	    				<strong>Tip!</strong><br>
+    					Stop mouse over branch buttons to see keyboard shortcuts. 
+    					Point field on diagram and use this shortcut to draw branch. 
+    				</div>
 					<div class="btn-toolbar">
 						<div class="btn-group">
-							<a class="btn btn-mini" href="javascript:addbranch('hor');">
+							<a class="btn btn-mini" href="javascript:addbranch('hor');" accesskey="h" 
+							rel="tooltip" title="Shift+Alt+h" data-placement="left">
 								<img src="{{url_for('static',filename='branch/hor.jpeg')}}"
 								width="50%">
-							</a> <a class="btn btn-mini" href="javascript:addbranch('ver');">
+							</a> 
+							<a class="btn btn-mini" href="javascript:addbranch('ver');" accesskey="v"
+							rel="tooltip" title="Shift+Alt+v" data-placement="top">
 								<img src="{{url_for('static',filename='branch/ver.jpeg')}}"
 								width="50%">
-							</a> <a class="btn btn-mini" href="javascript:addbranch('hor-down');">
+							</a> 
+							<a class="btn btn-mini" href="javascript:addbranch('hor-down');" accesskey="t"
+							rel="tooltip" title="Shift+Alt+t" data-placement="top">
 								<img src="{{url_for('static',filename='branch/hor-down.jpeg')}}"
 								width="50%">
-							</a> <a class="btn btn-mini" href="javascript:clear_cell();"> <img
-								src="{{url_for('static',filename='branch/clear.jpeg')}}"
+							</a> 
+							<a class="btn btn-mini" href="javascript:clear_cell();" accesskey="d"
+							rel="tooltip" title="Shift+Alt+d" data-placement="right"> 
+								<img src="{{url_for('static',filename='branch/clear.jpeg')}}"
 								width="50%">
 							</a>
 						</div>
 						</br>
 						<div class="btn-group">
-							<a class="btn btn-mini" href="javascript:addbranch('ver-right');">
-								<img
-								src="{{url_for('static',filename='branch/ver-right.jpeg')}}"
+							<a class="btn btn-mini" href="javascript:addbranch('ver-right');" accesskey="k"
+							rel="tooltip" title="Shift+Alt+k" data-placement="left">
+								<img src="{{url_for('static',filename='branch/ver-right.jpeg')}}"
 								width="50%">
-							</a> <a class="btn btn-mini" href="javascript:addbranch('ver-left');">
+							</a> 
+							<a class="btn btn-mini" href="javascript:addbranch('ver-left');" accesskey="x"
+							rel="tooltip" title="Shift+Alt+x" data-placement="top">
 								<img src="{{url_for('static',filename='branch/ver-left.jpeg')}}"
 								width="50%">
-							</a> <a class="btn btn-mini"
-								href="javascript:addbranch('top-right');"> <img
-								src="{{url_for('static',filename='branch/top-right.jpeg')}}"
+							</a> 
+							<a class="btn btn-mini" href="javascript:addbranch('top-right');" accesskey="l"
+							rel="tooltip" title="Shift+Alt+l" data-placement="bottom"> 
+								<img src="{{url_for('static',filename='branch/top-right.jpeg')}}"
 								width="50%">
-							</a> <a class="btn btn-mini" href="javascript:addbranch('left-top');">
+							</a> 
+							<a class="btn btn-mini" href="javascript:addbranch('left-top');" accesskey="j"
+							rel="tooltip" title="Shift+Alt+j" data-placement="right">
 								<img src="{{url_for('static',filename='branch/left-top.jpeg')}}"
 								width="50%">
 							</a>
 						</div>
 						</br>
 						<div class="btn-group">
-							<a class="btn btn-mini" href="javascript:addbranch('left-down');">
-								<img
-								src="{{url_for('static',filename='branch/left-down.jpeg')}}"
+							<a class="btn btn-mini" href="javascript:addbranch('left-down');" accesskey="z"
+							rel="tooltip" title="Shift+Alt+z" data-placement="left">
+								<img src="{{url_for('static',filename='branch/left-down.jpeg')}}"
 								width="50%">
-							</a> <a class="btn btn-mini"
-								href="javascript:addbranch('down-right');"> <img
-								src="{{url_for('static',filename='branch/down-right.jpeg')}}"
+							</a> 
+							<a class="btn btn-mini" href="javascript:addbranch('down-right');" accesskey="c"
+							rel="tooltip" title="Shift+Alt+c" data-placement="right"> 
+								<img src="{{url_for('static',filename='branch/down-right.jpeg')}}"
 								width="50%">
 							</a>
 						</div>
 					</div>
+		
 					<br>
 					<div id="msg" class="well" style="color: red;"></div>
 
 					<hr>
 					<button onclick='clear_all();' class="btn">Clear</button>
 					<button onclick='add_line();' class="btn">Append line</button>
-					<!-- <div class="span2">
-						<a href="javascript:load_example(1)">load example 1</a><br> <a
-							href="javascript:load_example(2)">load example 2</a><br>
-						<br>
-					</div> -->
 					<br>
 					<br>
 					<div class="btn-group">
-						<a class="btn btn-primary" href="#"><i class="icon-download"></i>
-							Load example</a> <a class="btn btn-primary dropdown-toggle"
-							data-toggle="dropdown" href="#"><span class="caret"></span></a>
-						<ul class="dropdown-menu">
-							<li><a href="javascript:load_example(1)">Example #1</a></li>
-							<li><a href="javascript:load_example(2)">Example #2</a></li>
-						</ul>
+						<!-- <div class="btn-large"> -->
+							<a class="btn btn-large dropdown-toggle" data-toggle="dropdown" href="#">
+								Load example
+								<span class="caret"></span>
+							</a>
+							<ul class="dropdown-menu">
+								<li><a href="javascript:load_example(1)">Example #1</a></li>
+								<li><a href="javascript:load_example(2)">Example #2</a></li>
+							</ul>
 					</div>
 
 					<div style="display: none">

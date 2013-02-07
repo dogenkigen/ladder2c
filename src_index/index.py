@@ -13,7 +13,8 @@ config = ConfigParser()
 config.readfp(app.open_resource("conf/stm32f103vct6.conf", 'r'))
 
 def parseXml(xml):
-	"""Parses XML"""
+	"""Returns C code from XML meta program"""
+	
 	elements = xml.find("elements")
 	delay = False
 	edge = False
@@ -31,7 +32,9 @@ def parseXml(xml):
 	return gen.getCode()
 
 def recurse(object, elements, gen):
-	"""Recursive method for parsing XML program"""
+	"""Method for parsing XML program. 
+	It is recursive since XML elements could be nested"""
+	
 	if len(object) > 1:
 		elemList = []
 		for oneElem in object:
@@ -74,6 +77,8 @@ def loadParser():
 
 @app.route("/")
 def index():
+	"""Main application endpoint"""
+	
 	return render_template('/index.html')
 
 @app.route("/get_json", methods=['POST', 'GET'])
