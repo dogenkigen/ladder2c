@@ -1,5 +1,11 @@
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
+	<!-- ################################################### -->
+	<!-- Schema describes XML meta language used in project. -->
+	<!-- Ladder diagram is first converted to XML, than to C -->
+	<!-- ################################################### -->
+
+
 	<!-- Only timers(T), registers(R), connectors(Y) and counters(C) can be 
 		set as output and with id in 0-999 -->
 	<xs:simpleType name="outputId">
@@ -8,6 +14,7 @@
 		</xs:restriction>
 	</xs:simpleType>
 
+	<!-- Input id name pattern -->
 	<xs:simpleType name="contactId">
 		<xs:restriction base="xs:string">
 			<xs:pattern value="[XTRYC][0-9]{1,3}[e]{0,1}" />
@@ -67,7 +74,8 @@
 		<xs:attribute name="id" type="xs:string" use="required" />
 	</xs:complexType>
 
-	<!-- Two complex types which can be used in cycle. From here -->
+	<!-- Two complex types which can be used in cycle(nested XML elements)-->
+	<!-- From here -->
 	<xs:complexType name="logicOne">
 		<xs:sequence>
 			<xs:choice minOccurs="0" maxOccurs="1">
@@ -91,6 +99,7 @@
 	</xs:complexType>
 	<!-- To here -->
 
+	<!-- Output element can contain logic* types or element -->
 	<xs:complexType name="output">
 		<xs:sequence>
 			<xs:choice minOccurs="0" maxOccurs="1">
