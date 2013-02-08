@@ -63,8 +63,9 @@
 					<div id="div_id">
 						<label>Id: </label>
 						<input type='text' id='item_name'
-							placeholder="Enter element name here." />
-						<span class="help-block">Element name needs to start with one of: X, Y, T, M, and be followed by number.</span>
+							placeholder="Enter element name here." 
+						rel="tooltip" title="Element name needs to start with one of: X, Y, T, M, and be followed by number." 
+						data-placement="right"/>
 					</div>
 					<div id="div_type" style="display: none;">
 						<label>set/reset: </label> <select id="set_type">
@@ -96,7 +97,8 @@
 	    				<strong>Tip!</strong><br>
     					Stop mouse over branch buttons to see keyboard shortcuts. 
     					Point field on diagram and use this shortcut to draw branch. 
-    				</div>
+ 	   				</div>
+
 					<div class="btn-toolbar">
 						<div class="btn-group">
 							<a class="btn btn-mini" href="javascript:addbranch('hor');" accesskey="h" 
