@@ -136,12 +136,26 @@ class XmlGenerator():
                 
                 
                 tmp = ''
+                tmp2 = False
                 for i in self.paths[output_id]:
-                    tmp += i.elems
-                
-                if(tmp[0:5] == '<and>' and tmp[-6:] == '</and>'):
+                    if(((tmp[0:5] == '<and>' and tmp[-6:] == '</and>') or \
+                        (tmp[0:4] == '<or>' and tmp[-5:]=='</or>') or \
+                        (tmp[0:8] == '<elem id' and tmp[-4:] == '" />')) and \
+                       ((i.elems[0:5] == '<and>' and i.elems[-6:] == '</and>') or \
+                        (i.elems[0:4] == '<or>' and i.elems[-5:]=='</or>') or \
+                        (i.elems[0:8] == '<elem id' and i.elems[-4:] == '" />'))):
+                        tmp = '<and>\n'+tmp
+                        tmp += i.elems
+                        tmp += '\n</and>'
+                    else:
+                        tmp += i.elems
+              
+                #surrounding all branches with global <and>
+                if((tmp[0:5] == '<and>' and tmp[-6:] == '</and>') or \
+                   (tmp[0:4] == '<or>' and tmp[-5:]=='</or>') or \
+                   (tmp[0:8] == '<elem id' and tmp[-4:] == '" />')):
                     self._add_to_document(tmp)
-                else:
+                else:   
                     self._add_to_document('<and>')
                     self._add_to_document(tmp)
                     self._add_to_document('</and>')

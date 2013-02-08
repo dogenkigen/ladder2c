@@ -92,7 +92,6 @@ def get_json():
 	6. Sending code with control message to html file
 	'''
 	data = request.json
-	print data
 	ccode = ''
 	try:
 		try:
